@@ -52,10 +52,32 @@ void Ship::move(int x, int y)
 	setx(getx() + x);
 	sety(gety() + y);
 }
-void Ship::setpos(int x, int y)
+void Ship::setPos(int x, int y)
 {
 	setx(x);
 	sety(y);
+}
+Enemy::Enemy(int x, int y, double rotation)
+{
+	this->setx(x);
+	this->sety(y);
+	this->setRotation(rotation);
+}
+void Enemy::setRotation(double rotation)
+{
+	this->rotation = rotation;
+}
+double Enemy::getRotation()
+{
+	return this->rotation;
+}
+void Enemy::setSlope(double slope)
+{
+	this->slope = slope;
+}
+double Enemy::getSlope()
+{
+	return this->slope;
 }
 Ship::Projectile* Ship::shoot()
 {
