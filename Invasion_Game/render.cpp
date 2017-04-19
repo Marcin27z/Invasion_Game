@@ -1,6 +1,13 @@
 #include "render.h"
 #include <string>
 #include <iostream>
+#include <sstream>
+std::string intToStr(int s)
+{
+	std::stringstream ss;
+	ss << s;
+	return ss.str();
+}
 void renderingThread(sf::RenderWindow* window)
 {
 	extern int opt;
@@ -207,7 +214,7 @@ void renderingThread(sf::RenderWindow* window)
 			{
 				window->draw(hpSprite[i]);
 			}
-			points = std::to_string(player.getPoints());
+			points = intToStr(player.getPoints());
 			pointsText.setString("Points " + points);
 			window->draw(playerShip);
 		}
