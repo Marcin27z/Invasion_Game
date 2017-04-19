@@ -1,9 +1,9 @@
 #include "ship.h"
-int Ship::getx()
+double Ship::getx()
 {
 	return this->x;
 }
-int Ship::gety()
+double Ship::gety()
 {
 	return this->y;
 }
@@ -15,11 +15,11 @@ int Ship::Projectile::getx()
 {
 	return this->x;
 }
-void Ship::setx(int x)
+void Ship::setx(double x)
 {
 	this->x = x;
 }
-void Ship::sety(int y)
+void Ship::sety(double y)
 {
 	this->y = y;
 }
@@ -47,21 +47,22 @@ int Player::getPoints()
 {
 	return this->points;
 }
-void Ship::move(int x, int y)
+void Ship::move(double x, double y)
 {
 	setx(getx() + x);
 	sety(gety() + y);
 }
-void Ship::setPos(int x, int y)
+void Ship::setPos(double x, double y)
 {
 	setx(x);
 	sety(y);
 }
-Enemy::Enemy(int x, int y, double rotation)
+Enemy::Enemy(double x, double y, double rotation, double slope)
 {
 	this->setx(x);
 	this->sety(y);
 	this->setRotation(rotation);
+	this->setSlope(slope);
 }
 void Enemy::setRotation(double rotation)
 {
@@ -79,10 +80,10 @@ double Enemy::getSlope()
 {
 	return this->slope;
 }
-Ship::Projectile* Ship::shoot()
+Ship::Projectile* Ship::shoot(int offset)
 {
 	Player::Projectile *p = new Player::Projectile();
-	p->sety(this->gety() - 32);
+	p->sety(this->gety() - offset);
 	p->setx(this->getx());
 	return p;
 }

@@ -5,8 +5,8 @@
 class Ship
 {
 private:
-	int x;
-	int y;
+	double x;
+	double y;
 public:
 	class Projectile
 	{
@@ -19,13 +19,13 @@ public:
 		int getx();
 		void setx(int);
 	};
-	int getx();
-	int gety();
-	void setx(int);
-	void sety(int);
-	void move(int, int);
-	void setPos(int, int);
-	Projectile* shoot();
+	double getx();
+	double gety();
+	void setx(double);
+	void sety(double);
+	void move(double, double);
+	void setPos(double, double);
+	Projectile* shoot(int);
 };
 class Enemy
 	: public Ship
@@ -33,10 +33,10 @@ class Enemy
 	double rotation;
 	double slope;
 public:
-	Enemy(int, int, double = 180);
+	Enemy(double, double, double = 180, double = 0.0);
 	void setRotation(double);
 	double getRotation();
-	void setSlope(double = 0);
+	void setSlope(double);
 	double getSlope();
 };
 class Player

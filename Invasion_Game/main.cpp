@@ -1,5 +1,6 @@
 #include<iostream>
 #include<cstdlib>
+#include<ctime>
 #include<cmath>
 #include "render.h"
 #define MAX_LEFT 38
@@ -19,7 +20,8 @@ int opt;
 bool game;
 int main()
 {
-	srand(time(NULL));
+	time_t t;
+	srand(time(&t));
 	// init player hp
 	player.setHp(3);
 	// init keyboard bools
@@ -85,20 +87,31 @@ int main()
 	sf::Time enemyGenTime;
 	sf::Clock enemyChargeClock;
 	sf::Time enemyChargeTime;
+	sf::Clock enemyC;
+	sf::Time enemyT;
 	//start game loop
 	int x = 0;
-	int edx = 1;
-	int eOffsetX = 0;
+	int edx[ENEMY];
+	int eOffsetX[ENEMY];
+	for (int i = 0; i < ENEMY; i++)
+	{
+		edx[i] = 1;
+		eOffsetX[i] = 0;
+	}
 	int dy;
 	int e;
 	int l;
 	double slope;
+	int randx;
+	int randy;
+	int count = 0;
 	sf::Event event;
 	while (window.isOpen())
 	{
 		enemyGenTime = enemyGenClock.getElapsedTime();
 		enemyChargeTime = enemyChargeClock.getElapsedTime();
-		if (enemyGenTime.asSeconds() > 2)
+		enemyT = enemyC.getElapsedTime();
+		if (enemyGenTime.asSeconds() > 1)
 		{
 			if (rand() % 10 > 6)
 			{
@@ -106,7 +119,26 @@ int main()
 				{
 					if (enemy[i] == NULL)
 					{
-						enemy[i] = new Enemy(rand() % 900 + 30, rand() % 200 + 40);
+						while (count != ENEMY)
+						{
+							randx = rand() % 900 + 30;
+							randy = rand() % 200 + 40;
+							for (int j = 0; j < ENEMY; j++)
+							{
+								if (enemy[j] != NULL)
+								{
+									if (abs(randx - enemy[j]->getx()) < 64 && abs(randy - enemy[j]->gety()) < 64)
+									{
+										count = 0;
+										break;
+										
+									}
+								}
+								count++;
+							}
+						}
+						enemy[i] = new Enemy(randx, randy);
+						count = 0;
 						break;
 					}
 				}
@@ -158,8 +190,7 @@ int main()
 				{
 					if (proj[i] == NULL)
 					{
-						proj[i] = player.shoot();
-						proj[i]->sety(proj[i]->gety() + 64);
+						proj[i] = player.shoot(-32);
 						//enemyProj[i] = enemy[0]->shoot();///////////////////////////
 						//enemyProjDiagonalLeft[i] = enemy[0]->shoot();
 						//enemyProjDiagonalRight[i] = enemy[0]->shoot();
@@ -177,17 +208,61 @@ int main()
 			//move player
 			if(x == 1 && player.getx() < MAX_RIGHT) player.move(1, 0);
 			if(x == -1 && player.getx() > MAX_LEFT) player.move(-1, 0);
+			
+			clock.restart();
+		}
+		if (enemyT.asMilliseconds() > 5)
+		{
 			//move enemy
 			for (int i = 0; i < ENEMY; i++)
 			{
 				if (enemy[i] != NULL)
 				{
-					enemy[i]->move(edx * 1, enemy[i]->getSlope() * 1);
-					eOffsetX += edx;
-					if ((eOffsetX == 100) || (eOffsetX == -100 )) edx = edx * -1;
+					if (enemy[i]->getSlope() != 0) enemy[i]->move(enemy[i]->getSlope() *1.5, 1.5);
+					else enemy[i]->move(edx[i] * 1, 0);
+					eOffsetX[i] += edx[i];
+					if (((eOffsetX[i] == 100) || (eOffsetX [i]== -100) || (enemy[i]->getx() - MAX_LEFT < 2) || (enemy[i]->getx() - MAX_RIGHT > 2)) && (enemy[i]->getSlope() == 0.0)) edx[i] = edx[i] * -1;
+					else
+					{
+						for (int j = 0; j < ENEMY; j++)
+						{
+							if (enemy[j] != NULL && enemy[j] != enemy[i])
+							{
+								if (abs(enemy[i]->getx() - enemy[j]->getx()) < 64 && abs(enemy[i]->gety() - enemy[j]->gety()) < 64)
+								{
+									edx[i] = edx[i] * -1;
+									break;
+								}
+							}
+						}
+					}
+					if (enemy[i]->gety() - 400 > 0 && enemy[i]->gety() - 400 < 2)
+					{
+						for (int j = 0; j < EPROJ; j++)
+						{
+							if (enemyProjDiagonalLeft[j] == NULL && enemyProjDiagonalLeft[j] == NULL && enemyProj[j] == NULL)
+							{
+								enemyProjDiagonalLeft[j] = enemy[i]->shoot(100);
+								enemyProjDiagonalRight[j] = enemy[i]->shoot(100);
+								enemyProj[j] = enemy[i]->shoot(100);
+								break;
+							}
+						}
+					}
+					if (enemy[i]->gety() - 760 > 1)
+					{
+						delete(enemy[i]);
+						enemy[i] = NULL;
+					}
+					else if (enemy[i]->gety() - player.gety() > 10 && enemy[i]->getx() - player.getx() < 32 && enemy[i]->getx() - player.getx() > -32)
+					{
+						delete(enemy[i]);
+						enemy[i] = NULL;
+						if (player.getHp() != 0) player.setHp(player.getHp() - 1);
+					}
 				}
 			}
-			clock.restart();
+			enemyC.restart();
 		}
 		if (playerTime.asMilliseconds() > 1)
 		{
@@ -197,14 +272,14 @@ int main()
 				if (proj[i] != NULL)
 				{
 
-					proj[i]->sety(proj[i]->gety() - 1);
+					proj[i]->sety(proj[i]->gety() - 2);
 					
 
 
 					for (int j = 0; j < ENEMY; j++)
 					{
 						if (enemy[j] != NULL)
-							if (proj[i]->gety() == (enemy[j]->gety() - 16) && (proj[i]->getx() > enemy[j]->getx() - 32 && (proj[i]->getx() < enemy[j]->getx() + 32)))
+							if (proj[i]->gety() - enemy[j]->gety() < 16 && (proj[i]->getx() > enemy[j]->getx() - 32 && (proj[i]->getx() < enemy[j]->getx() + 32)))
 							{
 								delete(proj[i]);
 								proj[i] = NULL;
@@ -319,6 +394,11 @@ int main()
 					enemy[i] = NULL;
 				}
 			}
+			for (int i = 0; i < ENEMY; i++)
+			{
+				edx[i] = 1;
+				eOffsetX[i] = 0;
+			}
 			while (window.isOpen())
 			{
 				sf::Event event;
@@ -349,6 +429,7 @@ int main()
 						if (opt == 0)
 						{
 							player.setHp(3);
+							player.setPoints(0);
 							player.setPos(PLAYER_DEF_X, PLAYER_DEF_Y);
 							game = true;
 							break;
