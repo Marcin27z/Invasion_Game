@@ -27,9 +27,14 @@ void Ship::Projectile::sety(double y)
 {
 	this->y = y;
 }
-void Ship::Projectile::setx(int x)
+void Ship::Projectile::setx(double x)
 {
 	this->x = x;
+}
+void Ship::Projectile::move(double y, double x)
+{
+	this->x += x;
+	this->y += y;
 }
 void Player::setHp(int hp)
 {
@@ -39,6 +44,14 @@ int Player::getHp()
 {
 	return this->hp;
 }
+void Player::addHp()
+{
+	this->setHp(this->getHp() + 1);
+}
+void Player::takeHp()
+{
+	this->setHp(this->getHp() - 1);
+}
 void Player::setPoints(int points)
 {
 	this->points = points;
@@ -46,6 +59,10 @@ void Player::setPoints(int points)
 int Player::getPoints()
 {
 	return this->points;
+}
+void Player::addPoints(int p)
+{
+	this->setPoints(this->getPoints() + p);
 }
 void Ship::move(double x, double y)
 {

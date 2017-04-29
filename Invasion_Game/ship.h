@@ -17,7 +17,8 @@ public:
 		double gety();
 		void sety(double);
 		int getx();
-		void setx(int);
+		void setx(double);
+		void move(double, double = 0);
 	};
 	double getx();
 	double gety();
@@ -48,7 +49,10 @@ private:
 public:
 	void setHp(int);
 	int getHp();
+	void addHp();
+	void takeHp();
 	void setPoints(int);
 	int getPoints();
+	void addPoints(int);
 };
 
