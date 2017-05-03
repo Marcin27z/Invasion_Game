@@ -26,7 +26,8 @@ void choice(sf::RenderWindow* window, int *opt, bool *game)
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !downPressed)
 			{
 				downPressed = true;
-				if (*opt < optMax - 1) *opt++;
+				if (*opt < optMax - 1) *opt += 1;
+				std::cout << *opt << std::endl;
 			}
 			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
@@ -35,7 +36,7 @@ void choice(sf::RenderWindow* window, int *opt, bool *game)
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !upPressed)
 			{
 				upPressed = true;
-				if (*opt > 0) *opt--;
+				if (*opt > 0) *opt -= 1;
 			}
 			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			{
@@ -63,6 +64,13 @@ public:
 	sf::Time playerTime;
 	Ship::Projectile *proj[PPROJ];
 	int y = 640;
+	PlayerHandler()
+	{
+		for (int i = 0; i < PPROJ; i++)
+		{
+			proj[i] = NULL;
+		}
+	}
 	void destroyProj(Ship::Projectile **proj)
 	{
 		delete(*proj);
@@ -70,13 +78,17 @@ public:
 	}
 	int getAction(sf::RenderWindow* window)
 	{
-		int x;
+		static int x;
 		sf::Event event;
-		bool spacePressed = false;
+		static bool spacePressed;
 		if (window->pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window->close();
+			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			{
+				spacePressed = false;
+			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
 				x = 1;
@@ -85,6 +97,7 @@ public:
 			{
 				x = -1;
 			}
+			else x = 0;
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !spacePressed)
 			{
 				for (int i = 0; i < PPROJ; i++)
@@ -97,9 +110,6 @@ public:
 				}
 				spacePressed = true;
 			}
-			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) spacePressed = false;
-			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) x = 0;
-
 		}
 		return x;
 	}
@@ -110,21 +120,20 @@ public:
 		//if (time.asMilliseconds() > 1)
 		//{
 			//move player
-			if (x == 1 && player.getx() < MAX_RIGHT) player.move(10, 0);
-			if (x == -1 && player.getx() > MAX_LEFT) player.move(-10, 0);
+			if (x == 1 && player.getx() < MAX_RIGHT) player.move(1, 0);
+			if (x == -1 && player.getx() > MAX_LEFT) player.move(-1, 0);
 			//clock.restart();
 		//}
 	}
 	void updateProj(Enemy *enemy[ENEMY])
 	{
-		if (playerTime.asMilliseconds() > 1)
-		{
 			// move player's projectiles
 			for (int i = 0; i < PPROJ; i++)
 			{
 				if (proj[i] != NULL)
 				{
-					proj[i]->move(-20);
+					proj[i]->move(-1.5);
+					
 					for (int j = 0; j < ENEMY; j++)
 					{
 						if (enemy[j] != NULL)
@@ -146,9 +155,8 @@ public:
 				}
 
 			}
-			playerClock.restart();
-		}
 	}
+
 };
 void destroyProj(Ship::Projectile **proj)
 {
@@ -181,12 +189,19 @@ public:
 	sf::Time enemyProjTime;
 	int eOffsetX[ENEMY];
 	int edx[ENEMY];
-	void init()
+	EnemyHandler()
 	{
 		for (int i = 0; i < ENEMY; i++)
 		{
 			eOffsetX[i] = 0;
-			edx[ENEMY] = 0;
+			edx[i] = 1;
+			enemy[i] = NULL;
+		}
+		for (int i = 0; i < EPROJ; i++)
+		{
+			enemyProj[i] = NULL;
+			enemyProjDiagonalLeft[i] = NULL;
+			enemyProjDiagonalRight[i] = NULL;
 		}
 	}
 	void destroyProj(Ship::Projectile **proj)
@@ -246,7 +261,7 @@ public:
 	}
 	void enemyCharge(Player *player)
 	{
-		int slope;
+		double slope;
 		int e;
 		int l = 0;
 		enemyChargeTime = enemyChargeClock.getElapsedTime();
@@ -259,6 +274,7 @@ public:
 					e = rand() % 10;
 					if (enemy[e] != NULL)
 					{
+						
 						slope = (double(enemy[e]->getx() - player->getx()) / double(enemy[e]->gety() - player->gety()));
 						enemy[e]->setRotation(180 - atan(slope)* (180.0 / 3.14));
 						enemy[e]->setSlope(slope);
@@ -321,7 +337,7 @@ public:
 					{
 						delete(enemy[i]);
 						enemy[i] = NULL;
-						player->addHp();
+						player->takeHp();
 					}
 				}
 			}
@@ -392,12 +408,6 @@ public:
 	sf::RenderWindow *window;
 	PlayerHandler playerhandler;
 	EnemyHandler enemyHandler;
-	Player player;
-	Enemy *enemy[ENEMY];
-	Ship::Projectile *enemyProj[EPROJ];
-	Ship::Projectile *enemyProjDiagonalLeft[EPROJ];
-	Ship::Projectile *enemyProjDiagonalRight[EPROJ];
-	Ship::Projectile *proj[PPROJ];
 	int y = 640;
 	int opt = 0;
 	bool game = false;
@@ -466,7 +476,7 @@ public:
 		sf::Text gameOverText;
 		setTextBox(&playAgain, &font, "Play again", 32, color);
 		setTextBox(&pointsText, &font, "Points:", 24, color);
-		setTextBox(&gameOverText, &font, "game Over", 64, color);
+		setTextBox(&gameOverText, &font, "Game Over", 64, color);
 		center(&playAgain, 100);
 		center(&gameOverText, -60);
 		center(&exit, 140);
@@ -497,8 +507,8 @@ public:
 		{
 			window->clear();
 			window->draw(background);
-			if (player.getHp() != 0) {
-				playerShip.setPosition(player.getx(), y);
+			if (playerhandler.player.getHp() != 0) {
+				playerShip.setPosition(playerhandler.player.getx(), y);
 				for (int i = 0; i < PPROJ; i++)
 				{
 					if (playerhandler.proj[i] != NULL)
@@ -551,9 +561,6 @@ public:
 			else
 			{
 				pointsText.setCharacterSize(48);
-				/*pointsTextRect = pointsText.getLocalBounds();
-				pointsText.setOrigin(pointsTextRect.left + pointsTextRect.width / 2.0f, pointsTextRect.top + pointsTextRect.height / 2.0f);
-				pointsText.setPosition(sf::Vector2f(1024 / 2.0f, (768 / 2.0f)));*/
 				center(&pointsText);
 				while (!game)
 				{
@@ -585,7 +592,6 @@ int main()
 	//create data class
 	Render render;
 	render.playerhandler.player.setHp(3);
-	render.enemyHandler.init();
 	// create window and disactive
 	sf::RenderWindow window(sf::VideoMode(1024, 768), "Invasion!!!");
 	window.setActive(false);
@@ -596,8 +602,6 @@ int main()
 	// launch menu loop
 	choice(render.window, &render.opt, &render.game);
 	//set player starting position
-	//enemy[0] = new Enemy();
-	//enemy[0]->setpos(100, 100);
 	render.playerhandler.player.setPos(PLAYER_DEF_X, PLAYER_DEF_Y);
 	// init clocks
 	sf::Time gameTime;
@@ -606,7 +610,7 @@ int main()
 	while (window.isOpen())
 	{
 		gameTime = gameClock.getElapsedTime();
-		if (gameTime.asMilliseconds() > 33)
+		if (gameTime.asMilliseconds() > 1)
 		{
 			render.enemyHandler.enemyGen();
 			render.enemyHandler.enemyCharge(&render.playerhandler.player);
@@ -643,6 +647,7 @@ int main()
 				render.enemyHandler.eOffsetX[i] = 0;
 			}
 			choice(render.window, &render.opt, &render.game);
+			if (render.game) render.playerhandler.player.setHp(3);
 		}
 
 	}
