@@ -121,7 +121,7 @@ void EnemyHandler::enemyGen()
 	int count = 0;
 	int randx;
 	int randy;
-	const int enemyRadius = 32;
+	const int enemyRadius = 24;
 	enemyGenTime = enemyGenClock.getElapsedTime();
 	if (enemyGenTime.asSeconds() > 1)
 	{

@@ -45,6 +45,8 @@ int main()
 {
 	time_t t;
 	srand(time(&t));
+	const int player_def_x = 512;
+	const int player_def_y = 640;
 	//create data class
 	Render render;
 	render.playerhandler.player.setHp(3);
@@ -58,7 +60,7 @@ int main()
 	// launch menu loop
 	choice(render.window, &render.opt, &render.game);
 	//set player starting position
-	render.playerhandler.player.setPos(PLAYER_DEF_X, PLAYER_DEF_Y);
+	render.playerhandler.player.setPos(player_def_x, player_def_y);
 	// init clocks
 	sf::Time gameTime;
 	sf::Clock gameClock;
@@ -107,7 +109,7 @@ int main()
 			{
 				render.playerhandler.player.setHp(3);
 				render.playerhandler.player.setPoints(0);
-				render.playerhandler.player.setPos(PLAYER_DEF_X, PLAYER_DEF_Y);
+				render.playerhandler.player.setPos(player_def_x, player_def_y);
 			}
 		}
 

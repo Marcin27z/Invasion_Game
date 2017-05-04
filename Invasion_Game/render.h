@@ -7,10 +7,6 @@
 #include<sstream>
 #define MAX_LEFT 38
 #define MAX_RIGHT 988
-#define MAX_UP 0
-#define MAX_DOWN 660
-#define PLAYER_DEF_X 512
-#define PLAYER_DEF_Y 640
 class PlayerHandler
 {
 public:
@@ -20,7 +16,7 @@ public:
 	sf::Clock playerClock;
 	sf::Time playerTime;
 	Ship::Projectile *proj[PPROJ];
-	int y = 640;
+	int y;
 	PlayerHandler();
 	void destroyProj(Ship::Projectile **);
 	int getAction(sf::RenderWindow*);
