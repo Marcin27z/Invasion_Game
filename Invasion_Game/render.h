@@ -1,53 +1,7 @@
-#include <SFML/Graphics.hpp>
-#include "ship.h"
+#include "playerhandler.h"
 #include<iostream>
-#include<cstdlib>
 #include<ctime>
-#include<cmath>
 #include<sstream>
-#define MAX_LEFT 38
-#define MAX_RIGHT 988
-class PlayerHandler
-{
-public:
-	Player player;
-	sf::Clock clock;
-	sf::Time time;
-	sf::Clock playerClock;
-	sf::Time playerTime;
-	Ship::Projectile *proj[PPROJ];
-	int y;
-	PlayerHandler();
-	void destroyProj(Ship::Projectile **);
-	int getAction(sf::RenderWindow*);
-	void update(int);
-	void updateProj(Enemy *[ENEMY]);
-};
-class EnemyHandler
-{
-public:
-	Enemy *enemy[ENEMY];
-	Ship::Projectile *enemyProj[EPROJ];
-	Ship::Projectile *enemyProjDiagonalLeft[EPROJ];
-	Ship::Projectile *enemyProjDiagonalRight[EPROJ];
-	sf::Clock enemyGenClock;
-	sf::Time enemyGenTime;
-	sf::Clock enemyChargeClock;
-	sf::Time enemyChargeTime;
-	sf::Clock enemyC;
-	sf::Time enemyT;
-	sf::Clock enemyProjClock;
-	sf::Time enemyProjTime;
-	int eOffsetX[ENEMY];
-	int edx[ENEMY];
-	EnemyHandler();
-	void destroyProj(Ship::Projectile **proj);
-	void destroyAllProjs();
-	void enemyGen();
-	void enemyCharge(Player *);
-	void enemyUpdate(Player *);
-	void enemyProjUpdate(Player *);
-};
 class Render
 {
 public:

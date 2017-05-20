@@ -1,4 +1,3 @@
-#define PPROJ 3
 #define EPROJ 10
 #define ENEMY 10
 #define MAX_HP 10
@@ -14,6 +13,7 @@ public:
 		int y;
 		int x;
 	public:
+		Projectile(int, int);
 		double gety();
 		void sety(double);
 		int getx();
@@ -44,11 +44,14 @@ class Player
 	: public Ship
 {
 private:
+	int playerProjectile;
 	int hp;
 	int points;
 public:
 	void setHp(int);
 	int getHp();
+	void setPlayerProjectile(int);
+	int getPlayerProjectile();
 	void addHp();
 	void takeHp();
 	void setPoints(int);

@@ -129,12 +129,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="enemyhandler.h" />
+    <ClInclude Include="jsonhandler.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="playerhandler.h" />
+    <ClInclude Include="powerup.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="ship.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="enemyhandler.cpp" />
+    <ClCompile Include="jsonhandler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="playerhandler.cpp" />
+    <ClCompile Include="powerup.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="ship.cpp" />
   </ItemGroup>

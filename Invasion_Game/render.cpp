@@ -1,301 +1,4 @@
 #include "render.h"
-PlayerHandler::PlayerHandler()
-{
-	y = 640;
-	for (int i = 0; i < PPROJ; i++)
-	{
-		proj[i] = NULL;
-	}
-}
-void PlayerHandler::destroyProj(Ship::Projectile **proj)
-{
-	delete(*proj);
-	*proj = NULL;
-}
-int PlayerHandler::getAction(sf::RenderWindow* window)
-{
-	static int x;
-	sf::Event event;
-	static bool spacePressed;
-	if (window->pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed)
-			window->close();
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-		{
-			spacePressed = false;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			x = 1;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			x = -1;
-		}
-		else x = 0;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !spacePressed)
-		{
-			for (int i = 0; i < PPROJ; i++)
-			{
-				if (proj[i] == NULL)
-				{
-					proj[i] = player.shoot(-32);
-					break;
-				}
-			}
-			spacePressed = true;
-		}
-	}
-	return x;
-}
-void PlayerHandler::update(int x)
-{
-	if (x == 1 && player.getx() < MAX_RIGHT) player.move(1, 0);
-	if (x == -1 && player.getx() > MAX_LEFT) player.move(-1, 0);
-}
-void PlayerHandler::updateProj(Enemy *enemy[ENEMY])
-{
-	const int enemyHitRadius = 28;
-	// move player's projectiles
-	for (int i = 0; i < PPROJ; i++)
-	{
-		if (proj[i] != NULL)
-		{
-			proj[i]->move(-1.5);
-
-			for (int j = 0; j < ENEMY; j++)
-			{
-				if (enemy[j] != NULL)
-					if (sqrt(pow(proj[i]->gety() - enemy[j]->gety(), 2) + pow(proj[i]->getx() - enemy[j]->getx(), 2)) < enemyHitRadius)
-					{
-						destroyProj(&proj[i]);
-						delete(enemy[j]);
-						enemy[j] = NULL;
-						player.addPoints(10);
-						if (player.getPoints() % 300 == 0 && player.getHp() < MAX_HP) player.addHp();
-						break;
-					}
-			}
-			if (proj[i] != NULL && proj[i]->gety() < 0)
-			{
-				delete(proj[i]);
-				proj[i] = NULL;
-			}
-		}
-
-	}
-}
-
-EnemyHandler::EnemyHandler()
-{
-	for (int i = 0; i < ENEMY; i++)
-	{
-		eOffsetX[i] = 0;
-		edx[i] = 1;
-		enemy[i] = NULL;
-	}
-	for (int i = 0; i < EPROJ; i++)
-	{
-		enemyProj[i] = NULL;
-		enemyProjDiagonalLeft[i] = NULL;
-		enemyProjDiagonalRight[i] = NULL;
-	}
-}
-void EnemyHandler::destroyProj(Ship::Projectile **proj)
-{
-	delete(*proj);
-	*proj = NULL;
-}
-void EnemyHandler::destroyAllProjs()
-{
-	for (int i = 0; i < EPROJ; i++)
-	{
-		if (enemyProj[i] != NULL) destroyProj(&enemyProj[i]);
-		if (enemyProjDiagonalLeft[i] != NULL) destroyProj(&enemyProjDiagonalLeft[i]);
-		if (enemyProjDiagonalRight[i] != NULL) destroyProj(&enemyProjDiagonalRight[i]);
-	}
-}
-void EnemyHandler::enemyGen()
-{
-	int count = 0;
-	int randx;
-	int randy;
-	const int enemyRadius = 24;
-	enemyGenTime = enemyGenClock.getElapsedTime();
-	if (enemyGenTime.asSeconds() > 1)
-	{
-		if (rand() % 10 > 6)
-		{
-			for (int i = 0; i < ENEMY; i++)
-			{
-				if (enemy[i] == NULL)
-				{
-					while (count != ENEMY)
-					{
-						randx = rand() % 900 + 30;
-						randy = rand() % 200 + 40;
-						for (int j = 0; j < ENEMY; j++)
-						{
-							if (enemy[j] != NULL)
-							{
-								if (abs(randx - enemy[j]->getx()) < 2 * enemyRadius && abs(randy - enemy[j]->gety()) < 2 * enemyRadius)
-								{
-									count = 0;
-									break;
-
-								}
-							}
-							count++;
-						}
-					}
-					enemy[i] = new Enemy(randx, randy);
-					count = 0;
-					break;
-				}
-			}
-		}
-		enemyGenClock.restart();
-	}
-}
-void EnemyHandler::enemyCharge(Player *player)
-{
-	double slope;
-	int e;
-	int l = 0;
-	enemyChargeTime = enemyChargeClock.getElapsedTime();
-	if (enemyChargeTime.asSeconds() > 3)
-	{
-		if (rand() % 10 > 6)
-		{
-			while (l < 20)
-			{
-				e = rand() % 10;
-				if (enemy[e] != NULL)
-				{
-
-					slope = (double(enemy[e]->getx() - player->getx()) / double(enemy[e]->gety() - player->gety()));
-					enemy[e]->setRotation(180 - atan(slope)* (180.0 / 3.14));
-					enemy[e]->setSlope(slope);
-					break;
-				}
-				l++;
-			}
-		}
-		l = 0;
-		enemyChargeClock.restart();
-	}
-}
-void EnemyHandler::enemyUpdate(Player *player)
-{
-	const int playerHitRadius = 28;
-	enemyT = enemyC.getElapsedTime();
-	if (enemyT.asMilliseconds() > 5)
-	{
-		//move enemy
-		for (int i = 0; i < ENEMY; i++)
-		{
-			if (enemy[i] != NULL)
-			{
-				if (enemy[i]->getSlope() != 0) enemy[i]->move(enemy[i]->getSlope() *1.5, 1.5);
-				else enemy[i]->move(edx[i] * 1, 0);
-				eOffsetX[i] += edx[i];
-				if (((eOffsetX[i] == 100) || (eOffsetX[i] == -100) || (enemy[i]->getx() - MAX_LEFT < 2) || (enemy[i]->getx() - MAX_RIGHT > 2)) && (enemy[i]->getSlope() == 0.0)) edx[i] = edx[i] * -1;
-				else
-				{
-					for (int j = 0; j < ENEMY; j++)
-					{
-						if (enemy[j] != NULL && enemy[j] != enemy[i])
-						{
-							if (abs(enemy[i]->getx() - enemy[j]->getx()) < 64 && abs(enemy[i]->gety() - enemy[j]->gety()) < 64)
-							{
-								edx[i] = edx[i] * -1;
-								break;
-							}
-						}
-					}
-				}
-				if (enemy[i]->gety() - 400 > 0 && enemy[i]->gety() - 400 < 2)
-				{
-					for (int j = 0; j < EPROJ; j++)
-					{
-						if (enemyProjDiagonalLeft[j] == NULL && enemyProjDiagonalLeft[j] == NULL && enemyProj[j] == NULL)
-						{
-							enemyProjDiagonalLeft[j] = enemy[i]->shoot(100);
-							enemyProjDiagonalRight[j] = enemy[i]->shoot(100);
-							enemyProj[j] = enemy[i]->shoot(100);
-							break;
-						}
-					}
-				}
-				if (enemy[i]->gety() - 760 > 1)
-				{
-					delete(enemy[i]);
-					enemy[i] = NULL;
-				}
-				else if (sqrt(pow(enemy[i]->gety() - player->gety(),2) + pow(enemy[i]->getx() - player->getx(),2)) < playerHitRadius)
-				{
-					delete(enemy[i]);
-					enemy[i] = NULL;
-					player->takeHp();
-				}
-			}
-		}
-		enemyC.restart();
-	}
-}
-void EnemyHandler::enemyProjUpdate(Player *player)
-{
-	const int playerHitRadius = 32;
-	enemyProjTime = enemyProjClock.getElapsedTime();
-	if (enemyProjTime.asMilliseconds() > 1)
-	{
-		for (int i = 0; i < EPROJ; i++)
-		{
-			if (enemyProjDiagonalLeft[i] != NULL)
-			{
-				enemyProjDiagonalLeft[i]->move(1, -1);
-				if (sqrt(pow(enemyProjDiagonalLeft[i]->gety() - player->gety(), 2) + pow(enemyProjDiagonalLeft[i]->getx() - player->getx(), 2)) < playerHitRadius)
-				{
-					destroyProj(&enemyProjDiagonalLeft[i]);
-					player->takeHp();
-				}
-				else if (abs(enemyProjDiagonalLeft[i]->gety() - 768) < 1)
-				{
-					destroyProj(&enemyProjDiagonalLeft[i]);
-				}
-			}
-			if (enemyProjDiagonalRight[i] != NULL)
-			{
-				enemyProjDiagonalRight[i]->move(1, 1);
-				if (sqrt(pow(enemyProjDiagonalRight[i]->gety() - player->gety(), 2) + pow(enemyProjDiagonalRight[i]->getx() - player->getx(), 2)) < playerHitRadius)
-				{
-					destroyProj(&enemyProjDiagonalRight[i]);
-					player->takeHp();
-				}
-				else if (abs(enemyProjDiagonalRight[i]->gety() - 768) < 1)
-				{
-					destroyProj(&enemyProjDiagonalRight[i]);
-				}
-			}
-			if (enemyProj[i] != NULL)
-			{
-				enemyProj[i]->move(1);
-				if (sqrt(pow(enemyProj[i]->gety() - player->gety(), 2) + pow(enemyProj[i]->getx() - player->getx(), 2)) < playerHitRadius)
-				{
-					destroyProj(&enemyProj[i]);
-					player->takeHp();
-				}
-				else if (abs(enemyProj[i]->gety() - 768) < 1)
-				{
-					destroyProj(&enemyProj[i]);
-				}
-
-			}
-			enemyProjClock.restart();
-		}
-	}
-}
 std::string Render::intToStr(int s)
 {
 	std::stringstream ss;
@@ -342,27 +45,37 @@ void Render::run()
 	sf::Color selectedColor(200, 100, 100);
 	sf::Text menu;
 	sf::Text play;
+	sf::Text load;
 	sf::Text exit;
+	sf::Text loadLevel;
 	setTextBox(&menu, &font, "MENU", 64, color);
 	setTextBox(&play, &font, "Play", 32, color);
+	setTextBox(&load, &font, "Load Game", 32, color);
 	setTextBox(&exit, &font, "Exit", 32, color);
+	setTextBox(&loadLevel, &font, "Load Level", 32, color);
 	sf::Texture backgroundTexture;
 	backgroundTexture.loadFromFile("Space.gif");
 	sf::Sprite background;
 	setSprite(&background, &backgroundTexture, 0, 0, 3, 3);
 	center(&menu, -60);
 	center(&play);
-	center(&exit, 40);
+	center(&load, 40);
+	center(&exit, 80);
 	while (!game)
 	{
 		if (opt == 0) play.setFillColor(selectedColor);
 		else  play.setFillColor(color);
-		if (opt == 1) exit.setFillColor(selectedColor);
+		if (opt == 1) load.setFillColor(selectedColor);
+		else  load.setFillColor(color);
+		if(opt == 2) loadLevel.setFillColor(selectedColor);
+		else  loadLevel.setFillColor(color);
+		if (opt == 3) exit.setFillColor(selectedColor);
 		else  exit.setFillColor(color);
 		window->clear();
 		window->draw(background);
 		window->draw(menu);
 		window->draw(play);
+		window->draw(load);
 		window->draw(exit);
 		window->display();
 	}
@@ -373,23 +86,28 @@ void Render::run()
 	setTextBox(&playAgain, &font, "Play again", 32, color);
 	setTextBox(&pointsText, &font, "Points:", 24, color);
 	setTextBox(&gameOverText, &font, "Game Over", 64, color);
-	center(&playAgain, 100);
-	center(&gameOverText, -60);
-	center(&exit, 140);
+	sf::Text continueText;
+	sf::Text save;
+	setTextBox(&continueText, &font, "Continue", 32, color);
+	setTextBox(&save, &font, "Save", 32, color);
 	sf::Texture playerShipTexture;
 	playerShipTexture.loadFromFile("Statek.png");
 	sf::Texture projectileTexture;
 	projectileTexture.loadFromFile("projectile.png");
 	sf::Texture enemyShipTexture;
 	enemyShipTexture.loadFromFile("Statek.png");
+	sf::Texture powerUpTexture[3];
+	powerUpTexture[0].loadFromFile("powerup1.png");
+	powerUpTexture[1].loadFromFile("powerup2.png");
+	powerUpTexture[2].loadFromFile("powerup3.png");
 	sf::Sprite hpSprite[MAX_HP];
 	for (int i = 0; i < MAX_HP; i++) setSprite(&hpSprite[i], &playerShipTexture, 8, 8, 1, 1, 10 + (32 * i), 740);
 	sf::Sprite playerShip;
 	setSprite(&playerShip, &playerShipTexture, 16, -16, 2, 2, playerhandler.player.getx(), playerhandler.player.gety());
 	sf::Sprite enemyShip[ENEMY];
 	for (int i = 0; i < ENEMY; i++) setSprite(&enemyShip[i], &enemyShipTexture, 16, 16, 2, 2, 0, 0, 180);
-	sf::Sprite projectile[PPROJ];
-	for (int i = 0; i < PPROJ; i++) setSprite(&projectile[i], &projectileTexture, 8, -8);
+	sf::Sprite projectile[5];
+	for (int i = 0; i < 5; i++) setSprite(&projectile[i], &projectileTexture, 8, -8);
 	sf::Sprite enemyProjectile[EPROJ];
 	sf::Sprite enemyProjectileDiagonalLeft[EPROJ];
 	sf::Sprite enemyProjectileDiagonalRight[EPROJ];
@@ -399,13 +117,18 @@ void Render::run()
 		setSprite(&enemyProjectileDiagonalLeft[i], &projectileTexture, 8, 8, 1, 1, 0, 0, 45);
 		setSprite(&enemyProjectileDiagonalRight[i], &projectileTexture, 8, -8, 1, 1, 0, 0, -45);
 	}
+	sf::Sprite powerUp[3];
+	for (int i = 0; i < 3; i++)
+	{
+		setSprite(&powerUp[i], &powerUpTexture[i], 8 - 8);
+	}
 	while (window->isOpen())
 	{
 		window->clear();
 		window->draw(background);
 		if (playerhandler.player.getHp() != 0) {
 			playerShip.setPosition(playerhandler.player.getx(), y);
-			for (int i = 0; i < PPROJ; i++)
+			for (int i = 0; i < playerhandler.player.getPlayerProjectile(); i++)
 			{
 				if (playerhandler.proj[i] != NULL)
 				{
@@ -419,6 +142,14 @@ void Render::run()
 				{
 					enemyProjectile[i].setPosition(enemyHandler.enemyProj[i]->getx(), enemyHandler.enemyProj[i]->gety());
 					window->draw(enemyProjectile[i]);
+				}
+			}
+			for (int i = 0; i < 3; i++)
+			{
+				if (playerhandler.powerUpHandler.powerUp[i] != NULL)
+				{
+						powerUp[i].setPosition(playerhandler.powerUpHandler.powerUp[i]->getx(), playerhandler.powerUpHandler.powerUp[i]->gety());
+						window->draw(powerUp[i]);
 				}
 			}
 			for (int i = 0; i < EPROJ; i++)
@@ -454,10 +185,13 @@ void Render::run()
 			pointsText.setString("Points " + points);
 			window->draw(playerShip);
 		}
-		else
+		else if(playerhandler.player.getHp() == 0)
 		{
 			pointsText.setCharacterSize(48);
 			center(&pointsText);
+			center(&playAgain, 100);
+			center(&gameOverText, -60);
+			center(&exit, 140);
 			while (!game)
 			{
 				if (opt == 0) playAgain.setFillColor(selectedColor);
@@ -475,6 +209,32 @@ void Render::run()
 			pointsText.setCharacterSize(24);
 			pointsText.setOrigin(0, 0);
 			pointsText.setPosition(0, 0);
+		}
+		if (!playerhandler.nopause)
+		{	
+			center(&continueText, -40);
+			center(&save);
+			center(&load, 40);
+			center(&exit, 80);
+			while (!playerhandler.nopause)
+			{
+				if (opt == 0) continueText.setFillColor(selectedColor);
+				else  continueText.setFillColor(color);
+				if (opt == 1) save.setFillColor(selectedColor);
+				else  save.setFillColor(color);
+				if (opt == 2) load.setFillColor(selectedColor);
+				else  load.setFillColor(color);
+				if (opt == 3) exit.setFillColor(selectedColor);
+				else  exit.setFillColor(color);
+				window->clear();
+				window->draw(background);
+				window->draw(pointsText);
+				window->draw(continueText);
+				window->draw(save);
+				window->draw(load);
+				window->draw(exit);
+				window->display();
+			}
 		}
 		window->draw(pointsText);
 		window->display();

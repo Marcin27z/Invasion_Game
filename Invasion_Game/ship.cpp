@@ -7,6 +7,11 @@ double Ship::gety()
 {
 	return this->y;
 }
+Ship::Projectile::Projectile(int x, int y)
+{
+	this->setx(x);
+	this->sety(y);
+}
 double Ship::Projectile::gety()
 {
 	return this->y;
@@ -43,6 +48,14 @@ void Player::setHp(int hp)
 int Player::getHp()
 {
 	return this->hp;
+}
+void Player::setPlayerProjectile(int p)
+{
+	this->playerProjectile = p;
+}
+int Player::getPlayerProjectile()
+{
+	return this->playerProjectile;
 }
 void Player::addHp()
 {
@@ -99,9 +112,9 @@ double Enemy::getSlope()
 }
 Ship::Projectile* Ship::shoot(int offset)
 {
-	Player::Projectile *p = new Player::Projectile();
-	p->sety(this->gety() - offset);
-	p->setx(this->getx());
+	Player::Projectile *p = new Player::Projectile(this->getx(), this->gety() - offset);
+	//p->sety(this->gety() - offset);
+	//p->setx(this->getx());
 	return p;
 }
 
