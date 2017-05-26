@@ -161,7 +161,7 @@ int main()
 			render.playerhandler.update(render.playerhandler.getAction(render.window), &render.playerhandler.powerUpHandler); //update player position
 			render.enemyHandler.enemyUpdate(&render.playerhandler.player); //update enemy position
 			render.enemyHandler.enemyProjUpdate(&render.playerhandler.player); //update enemys' projectiles
-			render.playerhandler.updateProj(render.enemyHandler.enemy, render.enemyHandler.enemy2, render.enemyHandler.enemy3); //update players projectiles
+			render.playerhandler.updateProj(render.enemyHandler.enemy); //update players projectiles
 			render.playerhandler.powerUpHandler.updatePowerUp(); //update state of powerup
 			render.playerhandler.powerUpHandler.powerUpEffectUpdate(&render.playerhandler.player); //update effect of powerup
 			gameClock.restart();

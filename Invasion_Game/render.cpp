@@ -185,18 +185,6 @@ void Render::run()
 					enemyShip[i].setPosition(enemyHandler.enemy[i]->getx(), enemyHandler.enemy[i]->gety());
 					window->draw(enemyShip[i]);
 				}
-				if (enemyHandler.enemy2[i] != NULL)
-				{
-					enemy2Ship[i].setRotation(enemyHandler.enemy2[i]->getRotation());
-					enemy2Ship[i].setPosition(enemyHandler.enemy2[i]->getx(), enemyHandler.enemy2[i]->gety());
-					window->draw(enemy2Ship[i]);
-				}
-				if (enemyHandler.enemy3[i] != NULL)
-				{
-					enemy3Ship[i].setRotation(enemyHandler.enemy3[i]->getRotation());
-					enemy3Ship[i].setPosition(enemyHandler.enemy3[i]->getx(), enemyHandler.enemy3[i]->gety());
-					window->draw(enemy3Ship[i]);
-				}
 			}
 			for (int i = 0; i < playerhandler.player.getHp(); i++)
 			{

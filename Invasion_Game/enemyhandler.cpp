@@ -6,12 +6,6 @@ EnemyHandler::EnemyHandler()
 		eOffsetX[i] = 0;
 		edx[i] = 1;
 		enemy[i] = NULL;
-		eOffsetX2[i] = 0;
-		edx2[i] = 3;
-		enemy2[i] = NULL;
-		eOffsetX3[i] = 0;
-		edx3[i] = 2;
-		enemy3[i] = NULL;
 	}
 	for (int i = 0; i < EPROJ; i++)
 	{
@@ -60,24 +54,6 @@ void EnemyHandler::enemyGen()
 
 						}
 					}
-					if (enemy2[j] != NULL)
-					{
-						if (abs(randx - enemy2[j]->getx()) < 2 * enemyRadius && abs(randy - enemy2[j]->gety()) < 2 * enemyRadius)
-						{
-							count = 0;
-							break;
-
-						}
-					}
-					if (enemy3[j] != NULL)
-					{
-						if (abs(randx - enemy3[j]->getx()) < 2 * enemyRadius && abs(randy - enemy3[j]->gety()) < 2 * enemyRadius)
-						{
-							count = 0;
-							break;
-
-						}
-					}
 					count++;
 				}
 			}
@@ -89,7 +65,7 @@ void EnemyHandler::enemyGen()
 				{
 					if (enemy[i] == NULL)
 					{
-						enemy[i] = new Enemy(randx, randy);
+						enemy[i] = new Enemy1(randx, randy);
 						break;
 					}
 				}
@@ -99,9 +75,9 @@ void EnemyHandler::enemyGen()
 			{
 				for (int i = 0; i < ENEMY; i++)
 				{
-					if (enemy2[i] == NULL)
+					if (enemy[i] == NULL)
 					{
-						enemy2[i] = new Enemy2(randx, randy);
+						enemy[i] = new Enemy2(randx, randy);
 						break;
 					}
 				}
@@ -111,9 +87,9 @@ void EnemyHandler::enemyGen()
 			{
 				for (int i = 0; i < ENEMY; i++)
 				{
-					if (enemy3[i] == NULL)
+					if (enemy[i] == NULL)
 					{
-						enemy3[i] = new Enemy3(randx, randy);
+						enemy[i] = new Enemy3(randx, randy);
 						break;
 					}
 				}
@@ -187,16 +163,6 @@ void EnemyHandler::enemyUpdate(Player *player)
 								break;
 							}
 						}
-						else if ((enemy2[j] != NULL) && (abs(enemy[i]->getx() - enemy2[j]->getx()) < 64 && abs(enemy[i]->gety() - enemy2[j]->gety()) < 64))
-						{
-							edx[i] = edx[i] * -1;
-							break;
-						}
-						else if ((enemy3[j] != NULL) && (abs(enemy[i]->getx() - enemy3[j]->getx()) < 64 && abs(enemy[i]->gety() - enemy3[j]->gety()) < 64))
-						{
-							edx[i] = edx[i] * -1;
-							break;
-						}
 					}
 				}
 				if (enemy[i]->gety() - 400 > 0 && enemy[i]->gety() - 400 < 2)
@@ -221,124 +187,6 @@ void EnemyHandler::enemyUpdate(Player *player)
 				{
 					delete(enemy[i]);
 					enemy[i] = NULL;
-					player->takeHp();
-				}
-			}
-			if (enemy2[i] != NULL)
-			{
-				//double radius = 100;
-				//static double angle = 0;
-				if (enemy2[i]->getSlope() != 0) enemy2[i]->move(enemy2[i]->getSlope() *1.5, 1.5);
-				else enemy2[i]->move(edx2[i] * 1, 0);
-				//else enemy[i]->setPos(200 + (radius * cos(angle * 3.1415 / 180)), 200 + (radius * sin(angle * 3.14 / 180)));
-				//angle = angle + 1;
-				eOffsetX2[i] += edx2[i];
-				if (((eOffsetX2[i] ==  90) || (eOffsetX2[i] == -90) || (enemy2[i]->getx() - MAX_LEFT < 2) || (enemy2[i]->getx() - MAX_RIGHT > 2)) && (enemy2[i]->getSlope() == 0.0)) edx2[i] = edx2[i] * -1;
-				else
-				{
-					for (int j = 0; j < ENEMY; j++)
-					{
-						if (enemy2[j] != NULL && enemy2[j] != enemy2[i])
-						{
-							if (abs(enemy2[i]->getx() - enemy2[j]->getx()) < 64 && abs(enemy2[i]->gety() - enemy2[j]->gety()) < 64)
-							{
-								edx2[i] = edx2[i] * -1;
-								break;
-							}
-						}
-						/*else if ((enemy[j] != NULL) && (abs(enemy2[i]->getx() - enemy[j]->getx()) < 64 && abs(enemy2[i]->gety() - enemy[j]->gety()) < 64))
-						{
-							edx2[i] = edx2[i] * -1;
-							break;
-						}
-						else if ((enemy3[j] != NULL) && (abs(enemy2[i]->getx() - enemy3[j]->getx()) < 64 && abs(enemy2[i]->gety() - enemy3[j]->gety()) < 64))
-						{
-							edx2[i] = edx2[i] * -1;
-							break;
-						}*/
-					}
-				}
-				if (enemy2[i]->gety() - 400 > 0 && enemy2[i]->gety() - 400 < 2)
-				{
-					for (int j = 0; j < EPROJ; j++)
-					{
-						if (enemyProjDiagonalLeft[j] == NULL && enemyProjDiagonalLeft[j] == NULL && enemyProj[j] == NULL)
-						{
-							enemyProjDiagonalLeft[j] = enemy[i]->shoot(100);
-							enemyProjDiagonalRight[j] = enemy[i]->shoot(100);
-							enemyProj[j] = enemy[i]->shoot(100);
-							break;
-						}
-					}
-				}
-				if (enemy2[i]->gety() - 760 > 2)
-				{
-					delete(enemy2[i]);
-					enemy2[i] = NULL;
-				}
-				else if (sqrt(pow(enemy2[i]->gety() - player->gety(), 2) + pow(enemy2[i]->getx() - player->getx(), 2)) < playerHitRadius)
-				{
-					delete(enemy2[i]);
-					enemy2[i] = NULL;
-					player->takeHp();
-				}
-			}
-			if (enemy3[i] != NULL)
-			{
-				//double radius = 100;
-				//static double angle = 0;
-				if (enemy3[i]->getSlope() != 0) enemy3[i]->move(enemy3[i]->getSlope() *1.5, 1.5);
-				else enemy3[i]->move(edx3[i] * 1, 0);
-				//else enemy[i]->setPos(200 + (radius * cos(angle * 3.1415 / 180)), 200 + (radius * sin(angle * 3.14 / 180)));
-				//angle = angle + 1;
-				eOffsetX3[i] += edx3[i];
-				if (((eOffsetX3[i] == 100) || (eOffsetX3[i] == -100) || (enemy3[i]->getx() - MAX_LEFT < 2) || (enemy3[i]->getx() - MAX_RIGHT > 2)) && (enemy3[i]->getSlope() == 0.0)) edx3[i] = edx3[i] * -1;
-				else
-				{
-					for (int j = 0; j < ENEMY; j++)
-					{
-						if (enemy3[j] != NULL && enemy3[j] != enemy3[i])
-						{
-							if (abs(enemy3[i]->getx() - enemy3[j]->getx()) < 64 && abs(enemy3[i]->gety() - enemy3[j]->gety()) < 64)
-							{
-								edx3[i] = edx3[i] * -1;
-								break;
-							}
-						}
-						/*else if ((enemy2[j] != NULL) && (abs(enemy3[i]->getx() - enemy2[j]->getx()) < 64 && abs(enemy3[i]->gety() - enemy2[j]->gety()) < 64))
-						{
-							edx3[i] = edx3[i] * -1;
-							break;
-						}
-						else if ((enemy[j] != NULL) && (abs(enemy3[i]->getx() - enemy[j]->getx()) < 64 && abs(enemy3[i]->gety() - enemy[j]->gety()) < 64))
-						{
-							edx3[i] = edx3[i] * -1;
-							break;
-						}*/
-					}
-				}
-				if (enemy3[i]->gety() - 400 > 0 && enemy3[i]->gety() - 400 < 2)
-				{
-					for (int j = 0; j < EPROJ; j++)
-					{
-						if (enemyProjDiagonalLeft[j] == NULL && enemyProjDiagonalLeft[j] == NULL && enemyProj[j] == NULL)
-						{
-							enemyProjDiagonalLeft[j] = enemy[i]->shoot(100);
-							enemyProjDiagonalRight[j] = enemy[i]->shoot(100);
-							enemyProj[j] = enemy[i]->shoot(100);
-							break;
-						}
-					}
-				}
-				if (enemy3[i]->gety() - 760 > 2)
-				{
-					delete(enemy3[i]);
-					enemy3[i] = NULL;
-				}
-				else if (sqrt(pow(enemy3[i]->gety() - player->gety(), 2) + pow(enemy3[i]->getx() - player->getx(), 2)) < playerHitRadius)
-				{
-					delete(enemy3[i]);
-					enemy3[i] = NULL;
 					player->takeHp();
 				}
 			}

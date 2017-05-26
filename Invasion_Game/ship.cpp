@@ -94,6 +94,11 @@ Enemy::Enemy(double x, double y, double rotation, double slope)
 	this->setRotation(rotation);
 	this->setSlope(slope);
 }
+Enemy1::Enemy1(double x, double y, double rotation, double slope)
+	:Enemy(x, y, rotation, slope)
+{
+
+}
 Enemy2::Enemy2(double x, double y, double rotation, double slope)
 	:Enemy(x, y, rotation, slope)
 {

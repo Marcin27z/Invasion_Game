@@ -40,11 +40,17 @@ public:
 	void setSlope(double);
 	double getSlope();
 };
+class Enemy1
+	:public Enemy
+{
+public:
+	Enemy1(double, double, double = 90, double = 0.0);
+};
 class Enemy2
 	:public Enemy
 {
 public:
-	Enemy2(double, double, double = 180, double = 0.0);
+	Enemy2(double, double, double = 0, double = 0.0);
 };
 class Enemy3
 	:public Enemy
