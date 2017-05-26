@@ -39,7 +39,6 @@ void Render::setSprite(sf::Sprite *sprite, sf::Texture *texture, int originX, in
 }
 void Render::run()
 {
-	sf::Font font;
 	font.loadFromFile("nasalization-rg.ttf");
 	sf::Color color(65, 105, 255);
 	sf::Color selectedColor(200, 100, 100);
@@ -60,7 +59,8 @@ void Render::run()
 	center(&menu, -60);
 	center(&play);
 	center(&load, 40);
-	center(&exit, 80);
+	center(&loadLevel, 80);
+	center(&exit, 120);
 	while (!game)
 	{
 		if (opt == 0) play.setFillColor(selectedColor);
@@ -76,6 +76,7 @@ void Render::run()
 		window->draw(menu);
 		window->draw(play);
 		window->draw(load);
+		window->draw(loadLevel);
 		window->draw(exit);
 		window->display();
 	}
@@ -96,6 +97,10 @@ void Render::run()
 	projectileTexture.loadFromFile("projectile.png");
 	sf::Texture enemyShipTexture;
 	enemyShipTexture.loadFromFile("Statek.png");
+	sf::Texture enemy2ShipTexture;
+	enemy2ShipTexture.loadFromFile("Statek.png");
+	sf::Texture enemy3ShipTexture;
+	enemy3ShipTexture.loadFromFile("Statek.png");
 	sf::Texture powerUpTexture[3];
 	powerUpTexture[0].loadFromFile("powerup1.png");
 	powerUpTexture[1].loadFromFile("powerup2.png");
@@ -106,6 +111,10 @@ void Render::run()
 	setSprite(&playerShip, &playerShipTexture, 16, -16, 2, 2, playerhandler.player.getx(), playerhandler.player.gety());
 	sf::Sprite enemyShip[ENEMY];
 	for (int i = 0; i < ENEMY; i++) setSprite(&enemyShip[i], &enemyShipTexture, 16, 16, 2, 2, 0, 0, 180);
+	sf::Sprite enemy2Ship[ENEMY];
+	for (int i = 0; i < ENEMY; i++) setSprite(&enemy2Ship[i], &enemy2ShipTexture, 16, 16, 2, 2, 0, 0, 180);
+	sf::Sprite enemy3Ship[ENEMY];
+	for (int i = 0; i < ENEMY; i++) setSprite(&enemy3Ship[i], &enemy3ShipTexture, 16, 16, 2, 2, 0, 0, 180);
 	sf::Sprite projectile[5];
 	for (int i = 0; i < 5; i++) setSprite(&projectile[i], &projectileTexture, 8, -8);
 	sf::Sprite enemyProjectile[EPROJ];
@@ -175,6 +184,18 @@ void Render::run()
 					enemyShip[i].setRotation(enemyHandler.enemy[i]->getRotation());
 					enemyShip[i].setPosition(enemyHandler.enemy[i]->getx(), enemyHandler.enemy[i]->gety());
 					window->draw(enemyShip[i]);
+				}
+				if (enemyHandler.enemy2[i] != NULL)
+				{
+					enemy2Ship[i].setRotation(enemyHandler.enemy2[i]->getRotation());
+					enemy2Ship[i].setPosition(enemyHandler.enemy2[i]->getx(), enemyHandler.enemy2[i]->gety());
+					window->draw(enemy2Ship[i]);
+				}
+				if (enemyHandler.enemy3[i] != NULL)
+				{
+					enemy3Ship[i].setRotation(enemyHandler.enemy3[i]->getRotation());
+					enemy3Ship[i].setPosition(enemyHandler.enemy3[i]->getx(), enemyHandler.enemy3[i]->gety());
+					window->draw(enemy3Ship[i]);
 				}
 			}
 			for (int i = 0; i < playerhandler.player.getHp(); i++)

@@ -1,3 +1,5 @@
+#ifndef __JSONHANDLER_H_INCLUDED__
+#define __JSONHANDLER_H_INCLUDED__
 #include "playerhandler.h"
 #include<iostream>
 #include<ctime>
@@ -5,6 +7,7 @@
 class Render
 {
 public:
+	sf::Font font;
 	std::string intToStr(int);
 	sf::RenderWindow *window;
 	PlayerHandler playerhandler;
@@ -19,3 +22,4 @@ public:
 	void setSprite(sf::Sprite *, sf::Texture *, int = 0, int = 0, int = 1, int = 1, int = 0, int = 0, int = 0);
 	void run();
 };
+#endif 

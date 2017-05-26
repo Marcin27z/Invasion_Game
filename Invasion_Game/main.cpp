@@ -1,13 +1,18 @@
 #include "jsonhandler.h"
 void jsonf()
 {
-	std::ofstream jsono("game1.json");
+	std::ofstream jsono("game.json");
 	int x = 200;
 	int y = 200;
-	json j = { {"x0",x},{"y0",y} };
+	/*json j = { {"enemyx0",x},{"enemyy0",y},{"enemyRotation0",180},{"enemySlope0",0}, {"enemyType0", 0},
+				{ "enemyx1",x + 100 },{ "enemyy1",y + 100 },{ "enemyRotation1",180 },{ "enemySlope1",0 },{ "enemyType1", 0 },
+					{ "enemyx2",x + 150 },{ "enemyy2",y + 200 },{ "enemyRotation2",180 },{ "enemySlope2",0 },{ "enemyType2", 0 } ,
+					{ "enemyx3",x + 200 },{ "enemyy3",y + 100 },{ "enemyRotation3",180 },{ "enemySlope3",0 },{ "enemyType3", 0  },
+					{ "enemyx4",x + 250 },{ "enemyy4",y + 200 },{ "enemyRotation4",180 },{ "enemySlope4",0 },{ "enemyType4", 0 }  };*/
+	json j;
+	j["enemy"] = { {"id", 1},{"x", 100},{"y", 100} };
 	jsono << j;
 	jsono.close();
-	json data;
 }
 void json_load(Render* render)
 {
@@ -32,44 +37,52 @@ void json_load(Render* render)
 	}
 	json_in.close();
 }
-void save(sf::RenderWindow* window, bool *game)
+void save(Render &render, JsonHandler &jsonHandler)
 {
 	std::cout << "save";
-	*game = true;
+	jsonHandler.save(render);
+	render.game = true;
 }
-void load(sf::RenderWindow* window, bool *game)
+void load(Render &render, JsonHandler &jsonHandler)
 {
 	std::cout << "load";
-	*game = true;
+	jsonHandler.load(render);
+	render.game = true;
 }
-void exit(sf::RenderWindow* window, bool *game)
+void exit(Render &render, JsonHandler &jsonHandler)
 {
-	window->close();
+	render.window->close();
 }
-void play(sf::RenderWindow* window, bool *game)
+void play(Render &render, JsonHandler &jsonHandler)
 {
-	*game = true;
+	render.game = true;
 }
-void loadLevel(sf::RenderWindow* window, bool *game)
+void unpause(Render &render, JsonHandler &jsonHandler)
+{
+	render.playerhandler.nopause = true;
+}
+void loadLevel(Render &render, JsonHandler &jsonHandler)
 {
 	std::cout << "load level";
-	*game = true;
+	jsonHandler.loadLevel(render);
+	render.game = true;
 }
-void choice(sf::RenderWindow* window, int optMax, int *opt, bool *game, void(*f1)(sf::RenderWindow*, bool *) = NULL, void(*f2)(sf::RenderWindow*, bool *) = NULL, void(*f3)(sf::RenderWindow*, bool *) = NULL, void(*f4)(sf::RenderWindow*, bool *) = NULL)
+void choice(Render &render, JsonHandler &jsonHandler, int optMax, void(*f1)(Render &, JsonHandler &) = NULL, void(*f2)(Render &, JsonHandler &) = NULL,
+	void(*f3)(Render &, JsonHandler &) = NULL, void(*f4)(Render &, JsonHandler &) = NULL)
 {
 	bool downPressed = false;
 	bool upPressed = false;
-	while (window->isOpen())
+	while (render.window->isOpen())
 	{
 		sf::Event event;
-		if (window->pollEvent(event))
+		if (render.window->pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
-				window->close();
+				render.window->close();
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !downPressed)
 			{
 				downPressed = true;
-				if (*opt < optMax - 1) *opt += 1;
+				if (render.opt < optMax - 1) render.opt += 1;
 			}
 			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
@@ -78,7 +91,7 @@ void choice(sf::RenderWindow* window, int optMax, int *opt, bool *game, void(*f1
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !upPressed)
 			{
 				upPressed = true;
-				if (*opt > 0) *opt -= 1;
+				if (render.opt > 0) render.opt -= 1;
 			}
 			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			{
@@ -86,24 +99,24 @@ void choice(sf::RenderWindow* window, int optMax, int *opt, bool *game, void(*f1
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 			{
-				if (*opt == 0)
+				if (render.opt == 0)
 				{
 					//*game = true;
-					f1(window, game);
+					f1(render, jsonHandler);
 				}
-				if (*opt == 1)
+				if (render.opt == 1)
 				{
-					f2(window, game);
+					f2(render, jsonHandler);
 				}
-				if (*opt == 2)
+				if (render.opt == 2)
 				{
-					f3(window, game);
+					f3(render, jsonHandler);
 				}
-				if (*opt == 3)
+				if (render.opt == 3)
 				{
-					f4(window, game);
+					f4(render, jsonHandler);
 				}
-				*opt = 0;
+				render.opt = 0;
 				break;
 			}
 		}
@@ -118,6 +131,7 @@ int main()
 	const int player_def_y = 640;
 	//create data class
 	Render render;
+	JsonHandler jsonHandler;
 	json_load(&render);
 	render.playerhandler.player.setHp(3);
 	render.playerhandler.player.setPlayerProjectile(2);
@@ -128,10 +142,11 @@ int main()
 	// start render thread
 	sf::Thread thread(&Render::run, &render);
 	thread.launch();
-	// launch menu loop
-	choice(render.window, 3, &render.opt, &render.game, &play, &load, &exit);
 	//set player starting position
 	render.playerhandler.player.setPos(player_def_x, player_def_y);
+	// launch menu loop
+	choice(render, jsonHandler, 4, &play, &load, &loadLevel, &exit);
+	
 	// init clocks
 	sf::Time gameTime;
 	sf::Clock gameClock;
@@ -147,8 +162,8 @@ int main()
 			render.enemyHandler.enemyUpdate(&render.playerhandler.player); //update enemy position
 			render.enemyHandler.enemyProjUpdate(&render.playerhandler.player); //update enemys' projectiles
 			render.playerhandler.updateProj(render.enemyHandler.enemy); //update players projectiles
-			render.playerhandler.powerUpHandler.updatePowerUp();
-			render.playerhandler.powerUpHandler.powerUpEffectUpdate(&render.playerhandler.player);
+			render.playerhandler.powerUpHandler.updatePowerUp(); //update state of powerup
+			render.playerhandler.powerUpHandler.powerUpEffectUpdate(&render.playerhandler.player); //update effect of powerup
 			gameClock.restart();
 		}
 		
@@ -177,7 +192,16 @@ int main()
 				render.enemyHandler.edx[i] = 1;
 				render.enemyHandler.eOffsetX[i] = 0;
 			}
-			choice(render.window, 2, &render.opt, &render.game, &play, &exit);
+			for (int i = 0; i < 3; i++)
+			{
+				if (render.playerhandler.powerUpHandler.powerUp[i] != NULL)
+				{
+					delete(render.playerhandler.powerUpHandler.powerUp[i]);
+					render.playerhandler.powerUpHandler.powerUp[i] == NULL;
+					render.playerhandler.powerUpHandler.disactivate(i);
+				}
+			}
+			choice(render, jsonHandler, 2, &play, &exit);
 			if (render.game)
 			{
 				render.playerhandler.player.setHp(3);
@@ -187,7 +211,7 @@ int main()
 		}
 		if (!render.playerhandler.nopause)
 		{
-			choice(render.window, 4, &render.opt, &render.playerhandler.nopause, &play, &save, &load, &exit);
+			choice(render, jsonHandler, 4, &unpause, &save, &load, &exit);
 		}
 
 	}

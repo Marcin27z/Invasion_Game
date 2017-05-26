@@ -10,13 +10,13 @@ public:
 	class Projectile
 	{
 	private:
-		int y;
-		int x;
+		double y;
+		double x;
 	public:
-		Projectile(int, int);
+		Projectile(double, double);
 		double gety();
 		void sety(double);
-		int getx();
+		double getx();
 		void setx(double);
 		void move(double, double = 0);
 	};
@@ -39,6 +39,18 @@ public:
 	double getRotation();
 	void setSlope(double);
 	double getSlope();
+};
+class Enemy2
+	:public Enemy
+{
+public:
+	Enemy2(double, double, double = 180, double = 0.0);
+};
+class Enemy3
+	:public Enemy
+{
+public:
+	Enemy3(double, double, double = 180, double = 0.0);
 };
 class Player
 	: public Ship

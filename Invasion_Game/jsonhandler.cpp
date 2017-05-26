@@ -1,14 +1,96 @@
 #include "jsonhandler.h"
-
-void JsonHandler::load(Render *render)
+void JsonHandler::load(Render& render, std::string name)
 {
-	std::ifstream json_in("game.json");
+	std::ifstream json_in;
+	try {
+		json_in.open(name);
+	}
+	catch (const std::ifstream::failure& e)
+	{
+		return;
+	}
+	int j = 0;
+	while (json_in)
+	//for (int j = 0; j < 6; j++)
+	{
+		try {
+			json_in >> data;
+		}
+		catch(json::parse_error &e){
+			break;
+		}
+		std::cout << j << data << "\n";
+		j++;
+		for (int i = 0; i < 10; i++)
+		{
+			enemyx[enemyx.size() - 1] = char(i + 48);
+			enemyy[enemyy.size() - 1] = char(i + 48);
+			enemyRotation[enemyRotation.size() - 1] = char(i + 48);
+			enemySlope[enemySlope.size() - 1] = char(i + 48);
+			enemyType[enemyType.size() - 1] = char(i + 48);
+			if (data.find(enemyx) != data.end() && data.find(enemyy) != data.end() && data.find(enemyRotation) != data.end() && data.find(enemySlope) != data.end()
+				&& data.find(enemyType) != data.end())
+			{
+				render.enemyHandler.enemy[i] =
+					new Enemy(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+				continue;
+			}
+		}
+		for (int i = 0; i < 10; i++)
+		{
+			projx[projx.size() - 1] = char(i + 48);
+			projy[projy.size() - 1] = char(i + 48);
+			diagleftprojx[diagleftprojx.size() - 1] = char(i + 48);
+			diagleftprojy[diagleftprojy.size() - 1] = char(i + 48);
+			diagrightprojx[diagrightprojx.size() - 1] = char(i + 48);
+			diagrightprojy[diagrightprojy.size() - 1] = char(i + 48);
+			if (data.find(projx) != data.end() && data.find(projy) != data.end()) render.enemyHandler.enemyProj[i] = new Ship::Projectile(data.at(projx).get<double>(), data.at(projy).get<double>());
+			if (data.find(diagleftprojx) != data.end() && data.find(diagleftprojy) != data.end()) render.enemyHandler.enemyProjDiagonalLeft[i] = new Ship::Projectile(data.at(diagleftprojx).get<double>(), data.at(diagleftprojy).get<double>());
+			if (data.find(diagrightprojx) != data.end() && data.find(diagrightprojy) != data.end()) render.enemyHandler.enemyProjDiagonalRight[i] = new Ship::Projectile(data.at(diagrightprojx).get<double>(), data.at(diagrightprojy).get<double>());
+		}
+		if (data.find("playerHp") != data.end())
+		{
+			render.playerhandler.player.setHp(data.at("playerHp").get<int>());
+			//std::cout << "found";
+		}
+		if (data.find("playerPoints") != data.end())
+		{
+			render.playerhandler.player.setPoints(data.at("playerPoints").get<int>());
+		}
+		if (data.find("playerx") != data.end() && data.find("playery") != data.end())
+		{
+			render.playerhandler.player.setPos(data.at("playerx").get<double>(), data.at("playery").get<double>());
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			playerprojx[playerprojx.size() - 1] = char(i + 48);
+			playerprojy[playerprojy.size() - 1] = char(i + 48);
+			if (data.find(playerprojx) != data.end() && data.find(playerprojy) != data.end()) render.playerhandler.proj[i] = new Ship::Projectile(data.at(playerprojx).get<double>(), data.at(playerprojy).get<double>());
+		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			powerupx[powerupx.size() - 1] = char(i + 48);
+			powerupy[powerupy.size() - 1] = char(i + 48);
+			poweruphandleractive[poweruphandleractive.size() - 1] = char(i + 48);
+			powerupid[powerupid.size() - 1] = char(i + 48);
+			additionalTime[additionalTime.size() - 1] = char(i + 48);
+			if (data.find(powerupx) != data.end() && data.find(powerupy) != data.end() && data.find(poweruphandleractive) != data.end() && data.find(powerupid) != data.end() && data.find(additionalTime) != data.end())
+			{
+				render.playerhandler.powerUpHandler.powerUp[i] = new PowerUp(data.at(powerupx).get<double>(), data.at(powerupy).get<double>(), data.at(powerupid).get<double>());
+				render.playerhandler.powerUpHandler.additionalTime[i] = sf::seconds(data.at(additionalTime).get<float>());
+				if(data.at(poweruphandleractive).get<bool>()) render.playerhandler.powerUpHandler.activate(i);
+				else render.playerhandler.powerUpHandler.disactivate(i);
+			}
+		}
+		
+	}
+	json_in.close();
+}
+void JsonHandler::loadLevel(Render& render, std::string name)
+{
+	std::ifstream json_in(name);
 	json_in >> data;
-	std::string enemyx = "enemyx ";
-	std::string enemyy = "enemyy ";
-	std::string enemyRotation = "enemyRotation ";
-	std::string enemySlope = "enemySlope ";
-	std::string enemyType = "enemyType ";
 	for (int i = 0; i < 10; i++)
 	{
 		enemyx[enemyx.size() - 1] = char(i + 48);
@@ -17,15 +99,36 @@ void JsonHandler::load(Render *render)
 		enemySlope[enemySlope.size() - 1] = char(i + 48);
 		enemyType[enemyType.size() - 1] = char(i + 48);
 		if (data.find(enemyx) != data.end() && data.find(enemyy) != data.end() && data.find(enemyRotation) != data.end() && data.find(enemySlope) != data.end()
-			&& data.find(enemyType) != data.end()) render->enemyHandler.enemy[i] =
-			new Enemy(data.at(enemyx).get<int>(), data.at(enemyy).get<int>(), data.at(enemyRotation).get<int>(), data.at(enemySlope).get<int>());;
+			&& data.find(enemyType) != data.end()) render.enemyHandler.enemy[i] =
+			new Enemy(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());;
 	}
-	std::string projx = "projx ";
-	std::string projy = "projy ";
-	std::string diagleftprojx = "diagleftprojx ";
-	std::string diagleftprojy = "diagleftprojy ";
-	std::string diagrightprojx = "diagrightprojx ";
-	std::string diagrightprojy = "diagrightprojy ";
+	json_in.close();
+}
+void JsonHandler::save(Render& render, std::string name)
+{
+	std::ofstream json_out(name);
+	json enemy[10];
+	for (int i = 0; i < 10; i++)
+	{
+		enemyx[enemyx.size() - 1] = char(i + 48);
+		enemyy[enemyy.size() - 1] = char(i + 48);
+		enemyRotation[enemyRotation.size() - 1] = char(i + 48);
+		enemySlope[enemySlope.size() - 1] = char(i + 48);
+		enemyType[enemyType.size() - 1] = char(i + 48);
+		if (render.enemyHandler.enemy[i] != NULL)
+		{
+			enemy[i][enemyx] = render.enemyHandler.enemy[i]->getx();
+			enemy[i][enemyy] = render.enemyHandler.enemy[i]->gety();
+			enemy[i][enemyRotation] = render.enemyHandler.enemy[i]->getRotation();
+			enemy[i][enemySlope] = render.enemyHandler.enemy[i]->getSlope();
+			enemy[i][enemyType] = 0;
+			json_out << enemy[i];
+		}
+
+	}
+	json enemyProj[10];
+	json enemyProjDiagLeft[10];
+	json enemyProjDiagRight[10];
 	for (int i = 0; i < 10; i++)
 	{
 		projx[projx.size() - 1] = char(i + 48);
@@ -34,41 +137,62 @@ void JsonHandler::load(Render *render)
 		diagleftprojy[diagleftprojy.size() - 1] = char(i + 48);
 		diagrightprojx[diagrightprojx.size() - 1] = char(i + 48);
 		diagrightprojy[diagrightprojy.size() - 1] = char(i + 48);
-		if (data.find(projx) != data.end() && data.find(projy) != data.end()) render->enemyHandler.enemyProj[i] = new Ship::Projectile(data.at(projx).get<int>(), data.at(projy).get<int>());
-		if (data.find(diagleftprojx) != data.end() && data.find(diagleftprojy) != data.end()) render->enemyHandler.enemyProjDiagonalLeft[i] = new Ship::Projectile(data.at(diagleftprojx).get<int>(), data.at(diagleftprojy).get<int>());
-		if (data.find(diagrightprojx) != data.end() && data.find(diagrightprojy) != data.end()) render->enemyHandler.enemyProjDiagonalRight[i] = new Ship::Projectile(data.at(diagrightprojx).get<int>(), data.at(diagrightprojy).get<int>());
+		if (render.enemyHandler.enemyProj[i] != NULL)
+		{
+			enemyProj[i][projx] = render.enemyHandler.enemyProj[i]->getx();
+			enemyProj[i][projy] = render.enemyHandler.enemyProj[i]->gety();
+			json_out << enemyProj[i];
+
+		}
+		if (render.enemyHandler.enemyProjDiagonalLeft[i] != NULL)
+		{
+			enemyProj[i][diagleftprojx] = render.enemyHandler.enemyProjDiagonalLeft[i]->getx();
+			enemyProj[i][diagleftprojy] = render.enemyHandler.enemyProjDiagonalLeft[i]->gety();
+			json_out << enemyProjDiagLeft[i];
+		}
+		if (render.enemyHandler.enemyProjDiagonalRight[i] != NULL)
+		{
+			enemyProj[i][diagrightprojx] = render.enemyHandler.enemyProjDiagonalRight[i]->getx();
+			enemyProj[i][diagrightprojy] = render.enemyHandler.enemyProjDiagonalRight[i]->gety();
+			json_out << enemyProjDiagRight[i];
+		}
 	}
-	render->playerhandler.player.setHp(data.at("playerHp").get<int>());
-	render->playerhandler.player.setPoints(data.at("playerPoints").get<int>());
-	render->playerhandler.player.setPos(data.at("playerx").get<int>(), data.at("playery").get<int>());
-	std::string powerupx = "powerupx ";
-	std::string powerupy = "powerupy ";
-	std::string poweruphandleractive = "powerupactive ";
-	std::string powerupid = "powerupactive ";
-	json_in.close();
-}
-void JsonHandler::loadLevel(Render *render)
-{
-	std::ifstream json_in("game.json");
-	json_in >> data;
-	std::string enemyx = "enemyx ";
-	std::string enemyy = "enemyy ";
-	std::string enemyRotation = "enemyRotation ";
-	std::string enemySlope = "enemySlope ";
-	std::string enemyType = "enemyType ";
-	for (int i = 0; i < 10; i++)
+	json plProj[3];
+	for (int i = 0; i < 3; i++)
 	{
-		enemyx[enemyx.size() - 1] = char(i + 48);
-		enemyy[enemyy.size() - 1] = char(i + 48);
-		enemyRotation[enemyRotation.size() - 1] = char(i + 48);
-		enemySlope[enemySlope.size() - 1] = char(i + 48);
-		enemyType[enemyType.size() - 1] = char(i + 48);
-		if (data.find(enemyx) != data.end() && data.find(enemyy) != data.end() && data.find(enemyRotation) != data.end() && data.find(enemySlope) != data.end()
-			&& data.find(enemyType) != data.end()) render->enemyHandler.enemy[i] =
-			new Enemy(data.at(enemyx).get<int>(), data.at(enemyy).get<int>(), data.at(enemyRotation).get<int>(), data.at(enemySlope).get<int>());;
+		playerprojx[playerprojx.size() - 1] = char(i + 48);
+		playerprojy[playerprojy.size() - 1] = char(i + 48);
+		if (render.playerhandler.proj[i] != NULL)
+		{
+			plProj[i][playerprojx] = render.playerhandler.proj[i]->getx();
+			plProj[i][playerprojy] = render.playerhandler.proj[i]->gety();
+			json_out << plProj[i];
+		}
 	}
-	json_in.close();
-}
-void JsonHandler::save(Render *render)
-{
+	json powerUp[3];
+	for (int i = 0; i < 3; i++)
+	{
+		powerupx[powerupx.size() - 1] = char(i + 48);
+		powerupy[powerupy.size() - 1] = char(i + 48);
+		poweruphandleractive[poweruphandleractive.size() - 1] = char(i + 48);
+		powerupid[powerupid.size() - 1] = char(i + 48);
+		additionalTime[additionalTime.size() - 1] = char(i + 48);
+		if (render.playerhandler.powerUpHandler.powerUp[i] != NULL)
+		{
+			powerUp[i][powerupx] = render.playerhandler.powerUpHandler.powerUp[i]->getx();
+			powerUp[i][powerupy] = render.playerhandler.powerUpHandler.powerUp[i]->gety();
+			powerUp[i][powerupid] = render.playerhandler.powerUpHandler.powerUp[i]->getId();
+			powerUp[i][poweruphandleractive] = render.playerhandler.powerUpHandler.getState(i);
+			powerUp[i][additionalTime] = render.playerhandler.powerUpHandler.additionalTime[i].asSeconds();
+			json_out << powerUp[i];
+		}
+		
+	}
+	json player;
+	player["playerHp"] = render.playerhandler.player.getHp();
+	player["playerx"] = render.playerhandler.player.getx();
+	player["playery"] = render.playerhandler.player.gety();
+	player["playerPoints"] = render.playerhandler.player.getPoints();
+	json_out << player;
+	json_out.close();
 }

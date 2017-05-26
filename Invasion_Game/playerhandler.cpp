@@ -25,8 +25,7 @@ int PlayerHandler::getAction(sf::RenderWindow* window)
 		{
 			nopause = !nopause;
 		}
-		if (event.type == sf::Event::Closed)
-			window->close();
+		if (event.type == sf::Event::Closed) window->close();
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		{
 			spacePressed = false;
@@ -67,7 +66,7 @@ void PlayerHandler::update(int x, PowerUpHandler *powerUpHandler)
 	{
 		if (powerUpHandler->powerUp[i] != NULL)
 		{
-			if (sqrt(pow(player.getx() - powerUpHandler->powerUp[i]->getx(), 2) + pow(player.gety() - powerUpHandler->powerUp[i]->gety(), 2)) < 20)
+			if (sqrt(pow(player.getx() - powerUpHandler->powerUp[i]->getx(), 2) + pow(player.gety() +10 - powerUpHandler->powerUp[i]->gety(), 2)) < 20)
 			{
 				delete(powerUpHandler->powerUp[i]);
 				powerUpHandler->powerUp[i] = NULL;

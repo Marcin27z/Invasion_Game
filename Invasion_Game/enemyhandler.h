@@ -6,6 +6,8 @@ class EnemyHandler
 {
 public:
 	Enemy *enemy[ENEMY];
+	Enemy2 *enemy2[ENEMY];
+	Enemy3 *enemy3[ENEMY];
 	Ship::Projectile *enemyProj[EPROJ];
 	Ship::Projectile *enemyProjDiagonalLeft[EPROJ];
 	Ship::Projectile *enemyProjDiagonalRight[EPROJ];

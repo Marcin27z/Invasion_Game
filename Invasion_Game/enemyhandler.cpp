@@ -39,35 +39,85 @@ void EnemyHandler::enemyGen()
 	{
 		if (rand() % 10 > 6)
 		{
-			for (int i = 0; i < ENEMY; i++)
+			while (count != ENEMY)
 			{
-				if (enemy[i] == NULL)
+				randx = rand() % 900 + 30;
+				randy = rand() % 200 + 40;
+				for (int j = 0; j < ENEMY; j++)
 				{
-					while (count != ENEMY)
+					if (enemy[j] != NULL)
 					{
-						randx = rand() % 900 + 30;
-						randy = rand() % 200 + 40;
-						for (int j = 0; j < ENEMY; j++)
+						if (abs(randx - enemy[j]->getx()) < 2 * enemyRadius && abs(randy - enemy[j]->gety()) < 2 * enemyRadius)
 						{
-							if (enemy[j] != NULL)
-							{
-								if (abs(randx - enemy[j]->getx()) < 2 * enemyRadius && abs(randy - enemy[j]->gety()) < 2 * enemyRadius)
-								{
-									count = 0;
-									break;
+							count = 0;
+							break;
 
-								}
-							}
-							count++;
 						}
 					}
-					enemy[i] = new Enemy(randx, randy);
-					count = 0;
-					break;
+					if (enemy2[j] != NULL)
+					{
+						if (abs(randx - enemy2[j]->getx()) < 2 * enemyRadius && abs(randy - enemy2[j]->gety()) < 2 * enemyRadius)
+						{
+							count = 0;
+							break;
+
+						}
+					}
+					if (enemy3[j] != NULL)
+					{
+						if (abs(randx - enemy3[j]->getx()) < 2 * enemyRadius && abs(randy - enemy3[j]->gety()) < 2 * enemyRadius)
+						{
+							count = 0;
+							break;
+
+						}
+					}
+					count++;
 				}
 			}
+			int type;
+			type = rand() % 3;
+			if (type == 0)
+			{
+				for (int i = 0; i < ENEMY; i++)
+				{
+					if (enemy[i] == NULL)
+					{
+						enemy[i] = new Enemy(randx, randy);
+						break;
+					}
+				}
+				
+			}
+			if (type == 0)
+			{
+				for (int i = 0; i < ENEMY; i++)
+				{
+					if (enemy2[i] == NULL)
+					{
+						enemy2[i] = new Enemy2(randx, randy);
+						break;
+					}
+				}
+
+			}
+			if (type == 0)
+			{
+				for (int i = 0; i < ENEMY; i++)
+				{
+					if (enemy3[i] == NULL)
+					{
+						enemy3[i] = new Enemy3(randx, randy);
+						break;
+					}
+				}
+
+			}
+
+			
+			count = 0;
 		}
-		enemyGenClock.restart();
+	enemyGenClock.restart();
 	}
 }
 void EnemyHandler::enemyCharge(Player *player)
@@ -144,7 +194,7 @@ void EnemyHandler::enemyUpdate(Player *player)
 						}
 					}
 				}
-				if (enemy[i]->gety() - 760 > 1)
+				if (enemy[i]->gety() - 760 > 2)
 				{
 					delete(enemy[i]);
 					enemy[i] = NULL;

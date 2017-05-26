@@ -1,9 +1,10 @@
 #include<cstdlib>
 #include "powerup.h"
-PowerUp::PowerUp(double x, double y)
+PowerUp::PowerUp(double x, double y, int id)
 {
 	setx(x);
 	sety(y);
+	setId(id);
 }
 double PowerUp::getx()
 {

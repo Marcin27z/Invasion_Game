@@ -3,7 +3,7 @@
 class PowerUp
 {
 public:
-	PowerUp(double, double);
+	PowerUp(double, double, int = 0);
 	double getx();
 	double gety();
 	void setx(double);
@@ -15,7 +15,6 @@ private:
 	double x;
 	double y;
 	int id;
-	
 };
 class PowerUpHandler
 {

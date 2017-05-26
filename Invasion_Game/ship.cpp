@@ -7,7 +7,7 @@ double Ship::gety()
 {
 	return this->y;
 }
-Ship::Projectile::Projectile(int x, int y)
+Ship::Projectile::Projectile(double x, double y)
 {
 	this->setx(x);
 	this->sety(y);
@@ -16,7 +16,7 @@ double Ship::Projectile::gety()
 {
 	return this->y;
 }
-int Ship::Projectile::getx()
+double Ship::Projectile::getx()
 {
 	return this->x;
 }
@@ -88,6 +88,20 @@ void Ship::setPos(double x, double y)
 	sety(y);
 }
 Enemy::Enemy(double x, double y, double rotation, double slope)
+{
+	this->setx(x);
+	this->sety(y);
+	this->setRotation(rotation);
+	this->setSlope(slope);
+}
+Enemy2::Enemy2(double x, double y, double rotation, double slope)
+{
+	this->setx(x);
+	this->sety(y);
+	this->setRotation(rotation);
+	this->setSlope(slope);
+}
+Enemy3::Enemy3(double x, double y, double rotation, double slope)
 {
 	this->setx(x);
 	this->sety(y);
