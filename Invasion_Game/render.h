@@ -1,6 +1,7 @@
 #ifndef __JSONHANDLER_H_INCLUDED__
 #define __JSONHANDLER_H_INCLUDED__
-#include "playerhandler.h"
+//#include "playerhandler.h"
+#include "enemyhandler.h"
 #include<iostream>
 #include<ctime>
 #include<sstream>
