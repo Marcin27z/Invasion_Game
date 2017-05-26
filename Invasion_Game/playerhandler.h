@@ -15,5 +15,6 @@ public:
 	void destroyProj(Ship::Projectile **);
 	int getAction(sf::RenderWindow*);
 	void update(int, PowerUpHandler *);
-	void updateProj(Enemy *[ENEMY]);
+	void updateProj(Enemy * [ENEMY], Enemy2 * [ENEMY], Enemy3 * [ENEMY]);
+
 };

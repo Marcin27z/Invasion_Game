@@ -95,18 +95,13 @@ Enemy::Enemy(double x, double y, double rotation, double slope)
 	this->setSlope(slope);
 }
 Enemy2::Enemy2(double x, double y, double rotation, double slope)
+	:Enemy(x, y, rotation, slope)
 {
-	this->setx(x);
-	this->sety(y);
-	this->setRotation(rotation);
-	this->setSlope(slope);
+
 }
 Enemy3::Enemy3(double x, double y, double rotation, double slope)
+	: Enemy(x, y, rotation, slope)
 {
-	this->setx(x);
-	this->sety(y);
-	this->setRotation(rotation);
-	this->setSlope(slope);
 }
 void Enemy::setRotation(double rotation)
 {

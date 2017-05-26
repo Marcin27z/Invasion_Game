@@ -15,12 +15,16 @@ public:
 	sf::Time enemyGenTime;
 	sf::Clock enemyChargeClock;
 	sf::Time enemyChargeTime;
-	sf::Clock enemyC;
-	sf::Time enemyT;
+	//sf::Clock enemyC;
+	//sf::Time enemyT;
 	sf::Clock enemyProjClock;
 	sf::Time enemyProjTime;
 	int eOffsetX[ENEMY];
 	int edx[ENEMY];
+	int eOffsetX2[ENEMY];
+	int edx2[ENEMY];
+	int eOffsetX3[ENEMY];
+	int edx3[ENEMY];
 	EnemyHandler();
 	void destroyProj(Ship::Projectile **proj);
 	void destroyAllProjs();

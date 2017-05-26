@@ -75,7 +75,7 @@ void PlayerHandler::update(int x, PowerUpHandler *powerUpHandler)
 		}
 	}
 }
-void PlayerHandler::updateProj(Enemy *enemy[ENEMY])
+void PlayerHandler::updateProj(Enemy *enemy[ENEMY], Enemy2 *enemy2[ENEMY], Enemy3 *enemy3[ENEMY])
 {
 	const int enemyHitRadius = 28;
 	// move player's projectiles
@@ -94,6 +94,28 @@ void PlayerHandler::updateProj(Enemy *enemy[ENEMY])
 						powerUpHandler.generatePowerUp(enemy[j]->getx(), enemy[j]->gety());
 						delete(enemy[j]);
 						enemy[j] = NULL;
+						player.addPoints(10);
+						if (player.getPoints() % 300 == 0 && player.getHp() < MAX_HP) player.addHp();
+						break;
+					}
+				if (enemy2[j] != NULL)
+					if (sqrt(pow(proj[i]->gety() - enemy2[j]->gety(), 2) + pow(proj[i]->getx() - enemy2[j]->getx(), 2)) < enemyHitRadius)
+					{
+						destroyProj(&proj[i]);
+						powerUpHandler.generatePowerUp(enemy2[j]->getx(), enemy2[j]->gety());
+						delete(enemy2[j]);
+						enemy2[j] = NULL;
+						player.addPoints(10);
+						if (player.getPoints() % 300 == 0 && player.getHp() < MAX_HP) player.addHp();
+						break;
+					}
+				if (enemy3[j] != NULL)
+					if (sqrt(pow(proj[i]->gety() - enemy3[j]->gety(), 2) + pow(proj[i]->getx() - enemy3[j]->getx(), 2)) < enemyHitRadius)
+					{
+						destroyProj(&proj[i]);
+						powerUpHandler.generatePowerUp(enemy3[j]->getx(), enemy3[j]->gety());
+						delete(enemy3[j]);
+						enemy3[j] = NULL;
 						player.addPoints(10);
 						if (player.getPoints() % 300 == 0 && player.getHp() < MAX_HP) player.addHp();
 						break;

@@ -51,7 +51,6 @@ void JsonHandler::load(Render& render, std::string name)
 		if (data.find("playerHp") != data.end())
 		{
 			render.playerhandler.player.setHp(data.at("playerHp").get<int>());
-			//std::cout << "found";
 		}
 		if (data.find("playerPoints") != data.end())
 		{
