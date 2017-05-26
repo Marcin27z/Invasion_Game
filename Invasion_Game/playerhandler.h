@@ -1,4 +1,9 @@
-#include "enemyhandler.h"
+#ifndef __PLAYERHANDLER_H__
+#define __PLAYERHANDLER_H__
+
+#include "ship.h"
+#include "powerup.h"
+#include <SFML/Graphics.hpp>
 class PlayerHandler
 {
 public:
@@ -18,3 +23,5 @@ public:
 	void updateProj(Enemy * [ENEMY]);
 
 };
+
+#endif

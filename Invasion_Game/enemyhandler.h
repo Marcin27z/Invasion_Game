@@ -1,7 +1,9 @@
-#include "powerup.h"
+#ifndef __ENEMYHANDLER_H__
+#define __ENEMYHANDLER_H__
+
+#include "ship.h"
+#include <SFML/Graphics.hpp>
 #include<cmath>
-#define MAX_LEFT 38
-#define MAX_RIGHT 988
 class EnemyHandler
 {
 public:
@@ -27,3 +29,5 @@ public:
 	void enemyUpdate(Player *);
 	void enemyProjUpdate(Player *);
 };
+
+#endif

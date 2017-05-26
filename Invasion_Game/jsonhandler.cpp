@@ -1,3 +1,6 @@
+#ifndef __JSONHANDLER_H__
+#define __JSONHANDLER_H__
+
 #include "jsonhandler.h"
 void JsonHandler::load(Render& render, std::string name)
 {
@@ -195,3 +198,5 @@ void JsonHandler::save(Render& render, std::string name)
 	json_out << player;
 	json_out.close();
 }
+
+#endif

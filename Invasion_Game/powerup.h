@@ -1,5 +1,8 @@
-#include <SFML/Graphics.hpp>
+#ifndef __POWERUP_H__
+#define __POWERUP_H__
+
 #include "ship.h"
+#include <SFML/Graphics.hpp>
 class PowerUp
 {
 public:
@@ -33,3 +36,5 @@ public:
 private:
 	bool active[3];
 };
+
+#endif

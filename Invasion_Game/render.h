@@ -1,9 +1,13 @@
-#ifndef __JSONHANDLER_H_INCLUDED__
-#define __JSONHANDLER_H_INCLUDED__
+#ifndef __RENDER_H__
+#define __RENDER_H__
+
 #include "playerhandler.h"
+#include "enemyhandler.h"
+
 #include<iostream>
 #include<ctime>
 #include<sstream>
+#include <SFML/Graphics.hpp>
 class Render
 {
 public:
@@ -22,4 +26,5 @@ public:
 	void setSprite(sf::Sprite *, sf::Texture *, int = 0, int = 0, int = 1, int = 1, int = 0, int = 0, int = 0);
 	void run();
 };
-#endif 
+
+#endif

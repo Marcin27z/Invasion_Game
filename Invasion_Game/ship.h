@@ -1,6 +1,11 @@
+#ifndef __SHIP_H__
+#define __SHIP_H__
+
 #define EPROJ 10
 #define ENEMY 10
 #define MAX_HP 10
+#define MAX_LEFT 38
+#define MAX_RIGHT 988
 class Ship
 {
 private:
@@ -77,3 +82,4 @@ public:
 	void addPoints(int);
 };
 
+#endif
