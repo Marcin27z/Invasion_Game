@@ -33,17 +33,39 @@ public:
 	void setPos(double, double);
 	Projectile* shoot(int);
 };
+class Player
+	: public Ship
+{
+private:
+	int playerProjectile;
+	int hp;
+	int points;
+public:
+	void setHp(int);
+	int getHp();
+	void setPlayerProjectile(int);
+	int getPlayerProjectile();
+	void addHp();
+	void takeHp();
+	void setPoints(int);
+	int getPoints();
+	void addPoints(int);
+};
 class Enemy
 	: public Ship
 {
 	double rotation;
 	double slope;
+	int type;
 public:
-	Enemy(double, double, double = 180, double = 0.0);
+	Enemy(double, double, int, double = 180, double = 0.0);
 	void setRotation(double);
 	double getRotation();
+	void setType(int);
+	int getType();
 	void setSlope(double);
 	double getSlope();
+	void update(Enemy *[], Player);
 };
 class Enemy1
 	:public Enemy
@@ -63,23 +85,6 @@ class Enemy3
 public:
 	Enemy3(double, double, double = 180, double = 0.0);
 };
-class Player
-	: public Ship
-{
-private:
-	int playerProjectile;
-	int hp;
-	int points;
-public:
-	void setHp(int);
-	int getHp();
-	void setPlayerProjectile(int);
-	int getPlayerProjectile();
-	void addHp();
-	void takeHp();
-	void setPoints(int);
-	int getPoints();
-	void addPoints(int);
-};
+
 
 #endif

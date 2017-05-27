@@ -87,25 +87,26 @@ void Ship::setPos(double x, double y)
 	setx(x);
 	sety(y);
 }
-Enemy::Enemy(double x, double y, double rotation, double slope)
+Enemy::Enemy(double x, double y,int type,double rotation, double slope)
 {
 	this->setx(x);
 	this->sety(y);
 	this->setRotation(rotation);
 	this->setSlope(slope);
+	this->setType(type);
 }
 Enemy1::Enemy1(double x, double y, double rotation, double slope)
-	:Enemy(x, y, rotation, slope)
+	:Enemy(x, y, 1,rotation, slope)
 {
 
 }
 Enemy2::Enemy2(double x, double y, double rotation, double slope)
-	:Enemy(x, y, rotation, slope)
+	:Enemy(x, y, 2,rotation, slope)
 {
 
 }
 Enemy3::Enemy3(double x, double y, double rotation, double slope)
-	: Enemy(x, y, rotation, slope)
+	: Enemy(x, y, 3,rotation, slope)
 {
 }
 void Enemy::setRotation(double rotation)
@@ -116,6 +117,14 @@ double Enemy::getRotation()
 {
 	return this->rotation;
 }
+void Enemy::setType(int type)
+{
+	this->type = type;
+}
+int Enemy::getType()
+{
+	return this->type;
+}
 void Enemy::setSlope(double slope)
 {
 	this->slope = slope;
@@ -123,6 +132,10 @@ void Enemy::setSlope(double slope)
 double Enemy::getSlope()
 {
 	return this->slope;
+}
+void Enemy::update(Enemy *enemy[], Player player)
+{
+
 }
 Ship::Projectile* Ship::shoot(int offset)
 {
