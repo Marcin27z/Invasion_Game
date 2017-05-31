@@ -6,6 +6,14 @@ PowerUp::PowerUp(double x, double y, int id)
 	sety(y);
 	setId(id);
 }
+/*OneShot::OneShot(double x, double y)
+	:PowerUp(x, y)
+{
+}
+ThreeShots::ThreeShots(double x, double y)
+	: PowerUp(x, y)
+{
+}*/
 double PowerUp::getx()
 {
 	return this->x;
@@ -93,14 +101,22 @@ void PowerUpHandler::powerUpEffect(int id, Player *player, float time)
 	if (id == 0)
 	{
 		player->setPlayerProjectile(1);
+		disactivate(0);
 	}
-	if (id == 2) player->setPlayerProjectile(3);
+	if (id == 2)
+	{
+		player->setPlayerProjectile(3);
+		disactivate(2);
+	}
+	if (id == 1)
+	{
+		player->setSpeedx(0.5);
+	}
 	additionalTime[id] = sf::seconds(time);
 	powerUpClock[id].restart();
 	powerUpTime[id] = powerUpClock[id].getElapsedTime();
 	this->activate(id);
 }
-
 void PowerUpHandler::powerUpEffectUpdate(Player *player)
 {
 	for (int i = 0; i < 3; i++)
@@ -110,10 +126,12 @@ void PowerUpHandler::powerUpEffectUpdate(Player *player)
 
 		if ((powerUpTime[i].asSeconds() > 10) && this->getState(i))
 		{
-			player->setPlayerProjectile(2);
+			if(i == 0 || i == 2) player->setPlayerProjectile(2);
+			if (i == 1) player->setSpeedx(1);
 			this->disactivate(i);
 			additionalTime[i] = sf::Time::Zero;
 
 		}
 	}
 }
+//void OneShot::powerUpEffect(Player &player, )

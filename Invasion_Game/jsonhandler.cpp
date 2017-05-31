@@ -14,7 +14,6 @@ void JsonHandler::load(Render& render, std::string name)
 	}
 	int j = 0;
 	while (json_in)
-	//for (int j = 0; j < 6; j++)
 	{
 		try {
 			json_in >> data;
@@ -31,18 +30,19 @@ void JsonHandler::load(Render& render, std::string name)
 			enemyRotation[enemyRotation.size() - 1] = char(i + 48);
 			enemySlope[enemySlope.size() - 1] = char(i + 48);
 			enemyType[enemyType.size() - 1] = char(i + 48);
+			enemySpeedx[enemySpeedx.size() - 1] = char(i + 48);
 			if (data.find(enemyx) != data.end() && data.find(enemyy) != data.end() && data.find(enemyRotation) != data.end() && data.find(enemySlope) != data.end()
-				&& data.find(enemyType) != data.end())
+				&& data.find(enemyType) != data.end() && data.find(enemySpeedx) != data.end())
 			{
 				if (data.at(enemyType).get<int>() == 1)
 					render.enemyHandler.enemy[i] =
-					new Enemy1(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+					new Enemy1(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemySpeedx).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
 				else if (data.at(enemyType).get<int>() == 2)
 					render.enemyHandler.enemy[i] =
-					new Enemy2(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+					new Enemy2(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemySpeedx).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
 				else if (data.at(enemyType).get<int>() == 3)
 					render.enemyHandler.enemy[i] =
-					new Enemy3(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+					new Enemy3(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemySpeedx).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
 			}
 		}
 		for (int i = 0; i < 10; i++)
@@ -68,6 +68,10 @@ void JsonHandler::load(Render& render, std::string name)
 		if (data.find("playerx") != data.end() && data.find("playery") != data.end())
 		{
 			render.playerhandler.player.setPos(data.at("playerx").get<double>(), data.at("playery").get<double>());
+		}
+		if (data.find("playerSpeedx") != data.end())
+		{
+			render.playerhandler.player.setSpeedx(data.at("playerSpeedx").get<double>());
 		}
 		for (int i = 0; i < 3; i++)
 		{
@@ -106,18 +110,19 @@ void JsonHandler::loadLevel(Render& render, std::string name)
 		enemyRotation[enemyRotation.size() - 1] = char(i + 48);
 		enemySlope[enemySlope.size() - 1] = char(i + 48);
 		enemyType[enemyType.size() - 1] = char(i + 48);
+		enemySpeedx[enemySpeedx.size() - 1] = char(i + 48);
 		if (data.find(enemyx) != data.end() && data.find(enemyy) != data.end() && data.find(enemyRotation) != data.end() && data.find(enemySlope) != data.end()
 			&& data.find(enemyType) != data.end())
 		{
 			if (data.at(enemyType).get<int>() == 1)
 				render.enemyHandler.enemy[i] =
-				new Enemy1(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+				new Enemy1(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemySpeedx).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
 			else if (data.at(enemyType).get<int>() == 2)
 				render.enemyHandler.enemy[i] =
-				new Enemy2(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+				new Enemy2(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemySpeedx).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
 			else if (data.at(enemyType).get<int>() == 3)
 				render.enemyHandler.enemy[i] =
-				new Enemy3(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
+				new Enemy3(data.at(enemyx).get<double>(), data.at(enemyy).get<double>(), data.at(enemySpeedx).get<double>(), data.at(enemyRotation).get<double>(), data.at(enemySlope).get<double>());
 		}
 	}
 	json_in.close();
@@ -133,6 +138,7 @@ void JsonHandler::save(Render& render, std::string name)
 		enemyRotation[enemyRotation.size() - 1] = char(i + 48);
 		enemySlope[enemySlope.size() - 1] = char(i + 48);
 		enemyType[enemyType.size() - 1] = char(i + 48);
+		enemySpeedx[enemySpeedx.size() - 1] = char(i + 48);
 		if (render.enemyHandler.enemy[i] != NULL)
 		{
 			enemy[i][enemyx] = render.enemyHandler.enemy[i]->getx();
@@ -140,6 +146,7 @@ void JsonHandler::save(Render& render, std::string name)
 			enemy[i][enemyRotation] = render.enemyHandler.enemy[i]->getRotation();
 			enemy[i][enemySlope] = render.enemyHandler.enemy[i]->getSlope();
 			enemy[i][enemyType] = render.enemyHandler.enemy[i]->getType();
+			enemy[i][enemySpeedx] = render.enemyHandler.enemy[i]->getSpeedx();
 			json_out << enemy[i];
 		}
 
@@ -211,6 +218,7 @@ void JsonHandler::save(Render& render, std::string name)
 	player["playerx"] = render.playerhandler.player.getx();
 	player["playery"] = render.playerhandler.player.gety();
 	player["playerPoints"] = render.playerhandler.player.getPoints();
+	player["playerSpeedx"] = render.playerhandler.player.getSpeedx();
 	json_out << player;
 	json_out.close();
 }

@@ -98,9 +98,9 @@ void Render::run()
 	sf::Texture enemyShipTexture;
 	enemyShipTexture.loadFromFile("Statek.png");
 	sf::Texture enemy2ShipTexture;
-	enemy2ShipTexture.loadFromFile("Statek.png");
+	enemy2ShipTexture.loadFromFile("Statekzielony.png");
 	sf::Texture enemy3ShipTexture;
-	enemy3ShipTexture.loadFromFile("Statek.png");
+	enemy3ShipTexture.loadFromFile("Statekczerwony.png");
 	sf::Texture powerUpTexture[3];
 	powerUpTexture[0].loadFromFile("powerup1.png");
 	powerUpTexture[1].loadFromFile("powerup2.png");
@@ -179,12 +179,25 @@ void Render::run()
 			}
 			for (int i = 0; i < ENEMY; i++)
 			{
-				if (enemyHandler.enemy[i] != NULL)
+				if ((enemyHandler.enemy[i] != NULL) && (enemyHandler.enemy[i]->getType() == 1))
 				{
 					enemyShip[i].setRotation(enemyHandler.enemy[i]->getRotation());
 					enemyShip[i].setPosition(enemyHandler.enemy[i]->getx(), enemyHandler.enemy[i]->gety());
 					window->draw(enemyShip[i]);
 				}
+				if ((enemyHandler.enemy[i] != NULL) && (enemyHandler.enemy[i]->getType() == 2))
+				{
+					enemy2Ship[i].setRotation(enemyHandler.enemy[i]->getRotation());
+					enemy2Ship[i].setPosition(enemyHandler.enemy[i]->getx(), enemyHandler.enemy[i]->gety());
+					window->draw(enemy2Ship[i]);
+				}
+				if ((enemyHandler.enemy[i] != NULL) && (enemyHandler.enemy[i]->getType() == 3))
+				{
+					enemy3Ship[i].setRotation(enemyHandler.enemy[i]->getRotation());
+					enemy3Ship[i].setPosition(enemyHandler.enemy[i]->getx(), enemyHandler.enemy[i]->gety());
+					window->draw(enemy3Ship[i]);
+				}
+
 			}
 			for (int i = 0; i < playerhandler.player.getHp(); i++)
 			{

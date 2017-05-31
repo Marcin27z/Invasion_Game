@@ -1,4 +1,9 @@
 #include "ship.h"
+Ship::Ship(double x, double y, double speedx)
+{
+	setPos(x, y);
+	setSpeedx(speedx);
+}
 double Ship::getx()
 {
 	return this->x;
@@ -40,6 +45,12 @@ void Ship::Projectile::move(double y, double x)
 {
 	this->x += x;
 	this->y += y;
+}
+Player::Player(double x, double y, double speedx, int playerProjectile, int points, int hp) :Ship(x, y, speedx)
+{
+	setPlayerProjectile(playerProjectile);
+	setHp(hp);
+	setPoints(points);
 }
 void Player::setHp(int hp)
 {
@@ -87,26 +98,32 @@ void Ship::setPos(double x, double y)
 	setx(x);
 	sety(y);
 }
-Enemy::Enemy(double x, double y,int type,double rotation, double slope)
+void Ship::setSpeedx(double speedx)
 {
-	this->setx(x);
-	this->sety(y);
+	this->speedx = speedx;
+}
+double Ship::getSpeedx()
+{
+	return this->speedx;
+}
+Enemy::Enemy(double x, double y, int type, double speedx, double rotation, double slope) : Ship(x, y, speedx)
+{
 	this->setRotation(rotation);
 	this->setSlope(slope);
 	this->setType(type);
 }
-Enemy1::Enemy1(double x, double y, double rotation, double slope)
-	:Enemy(x, y, 1,rotation, slope)
+Enemy1::Enemy1(double x, double y, double speedx, double rotation, double slope)
+	:Enemy(x, y, 1, speedx, rotation, slope)
 {
 
 }
-Enemy2::Enemy2(double x, double y, double rotation, double slope)
-	:Enemy(x, y, 2,rotation, slope)
+Enemy2::Enemy2(double x, double y, double speedx, double rotation, double slope)
+	:Enemy(x, y, 2, speedx, rotation, slope)
 {
 
 }
-Enemy3::Enemy3(double x, double y, double rotation, double slope)
-	: Enemy(x, y, 3,rotation, slope)
+Enemy3::Enemy3(double x, double y, double speedx, double rotation, double slope)
+	: Enemy(x, y, 3, speedx, rotation, slope)
 {
 }
 void Enemy::setRotation(double rotation)

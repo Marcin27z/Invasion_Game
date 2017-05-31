@@ -1,5 +1,5 @@
 #include "playerhandler.h"
-PlayerHandler::PlayerHandler()
+PlayerHandler::PlayerHandler() :player(512, 640, 1)
 {
 	nopause = true;
 	y = 640;
@@ -60,8 +60,8 @@ int PlayerHandler::getAction(sf::RenderWindow* window)
 }
 void PlayerHandler::update(int x, PowerUpHandler *powerUpHandler)
 {
-	if (x == 1 && player.getx() < MAX_RIGHT) player.move(1, 0);
-	if (x == -1 && player.getx() > MAX_LEFT) player.move(-1, 0);
+	if (x == 1 && player.getx() < MAX_RIGHT) player.move(1 * player.getSpeedx(), 0);
+	if (x == -1 && player.getx() > MAX_LEFT) player.move(-1 * player.getSpeedx(), 0);
 	for (int i = 0; i < 3; i++)
 	{
 		if (powerUpHandler->powerUp[i] != NULL)

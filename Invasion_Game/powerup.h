@@ -14,11 +14,26 @@ public:
 	double getId();
 	void setId(int);
 	void move(double, double);
+	//virtual void powerUpEffect(Player *, float = 0.0);
 private:
 	double x;
 	double y;
 	int id;
 };
+/*class OneShot
+	:PowerUp
+{
+public:
+	OneShot(double, double);
+	virtual void powerUpEffect(Player *, float = 0.0);
+};
+class ThreeShots
+	:PowerUp
+{
+public:
+	ThreeShots(double, double);
+	virtual void powerUpEffect(Player *, float = 0.0);
+};*/
 class PowerUpHandler
 {
 public:

@@ -1,16 +1,15 @@
 #include "jsonhandler.h"
-void jsonf()
+/*void jsonf()
 {
 	std::ofstream jsono("game.json");
 	int x = 200;
 	int y = 200;
-	/*json j = { {"enemyx0",x},{"enemyy0",y},{"enemyRotation0",180},{"enemySlope0",0}, {"enemyType0", 0},
-				{ "enemyx1",x + 100 },{ "enemyy1",y + 100 },{ "enemyRotation1",180 },{ "enemySlope1",0 },{ "enemyType1", 0 },
-					{ "enemyx2",x + 150 },{ "enemyy2",y + 200 },{ "enemyRotation2",180 },{ "enemySlope2",0 },{ "enemyType2", 0 } ,
-					{ "enemyx3",x + 200 },{ "enemyy3",y + 100 },{ "enemyRotation3",180 },{ "enemySlope3",0 },{ "enemyType3", 0  },
-					{ "enemyx4",x + 250 },{ "enemyy4",y + 200 },{ "enemyRotation4",180 },{ "enemySlope4",0 },{ "enemyType4", 0 }  };*/
-	json j;
-	j["enemy"] = { {"id", 1},{"x", 100},{"y", 100} };
+	json j = { {"enemyx0",x},{"enemyy0",y},{"enemyRotation0",180},{"enemySlope0",0}, {"enemyType0", 1},
+				{ "enemyx1",x + 100 },{ "enemyy1",y + 100 },{ "enemyRotation1",180 },{ "enemySlope1",0 },{ "enemyType1", 1 },
+					{ "enemyx2",x + 150 },{ "enemyy2",y + 200 },{ "enemyRotation2",180 },{ "enemySlope2",0 },{ "enemyType2", 2 } ,
+					{ "enemyx3",x + 200 },{ "enemyy3",y + 100 },{ "enemyRotation3",180 },{ "enemySlope3",0 },{ "enemyType3", 3  },
+					{ "enemyx4",x + 250 },{ "enemyy4",y + 200 },{ "enemyRotation4",180 },{ "enemySlope4",0 },{ "enemyType4", 2 }  };
+	//j["enemy"] = { {"id", 1},{"x", 100},{"y", 100} };
 	jsono << j;
 	jsono.close();
 }
@@ -36,7 +35,7 @@ void json_load(Render* render)
 			new Enemy(data.at(enemyx).get<int>(), data.at(enemyy).get<int>(), data.at(enemyRotation).get<int>(), data.at(enemySlope).get<int>());;
 	}
 	json_in.close();
-}
+}*/
 void save(Render &render, JsonHandler &jsonHandler)
 {
 	std::cout << "save";
@@ -124,7 +123,6 @@ void choice(Render &render, JsonHandler &jsonHandler, int optMax, void(*f1)(Rend
 }
 int main()
 {
-	jsonf();
 	time_t t;
 	srand(time(&t));
 	const int player_def_x = 512;
@@ -132,7 +130,6 @@ int main()
 	//create data class
 	Render render;
 	JsonHandler jsonHandler;
-	json_load(&render);
 	render.playerhandler.player.setHp(3);
 	render.playerhandler.player.setPlayerProjectile(2);
 	// create window and disactive
@@ -167,7 +164,7 @@ int main()
 			gameClock.restart();
 		}
 		
-		if (render.playerhandler.player.getHp() == 0)
+		if (render.playerhandler.player.getHp() == 0) //player lost game
 		{
 			render.game = false;
 			render.enemyHandler.destroyAllProjs();
@@ -201,7 +198,7 @@ int main()
 					render.playerhandler.powerUpHandler.disactivate(i);
 				}
 			}
-			choice(render, jsonHandler, 2, &play, &exit);
+			choice(render, jsonHandler, 2, &play, &exit); //show menu
 			if (render.game)
 			{
 				render.playerhandler.player.setHp(3);
@@ -209,9 +206,9 @@ int main()
 				render.playerhandler.player.setPos(player_def_x, player_def_y);
 			}
 		}
-		if (!render.playerhandler.nopause)
+		if (!render.playerhandler.nopause) //player paused game
 		{
-			choice(render, jsonHandler, 4, &unpause, &save, &load, &exit);
+			choice(render, jsonHandler, 4, &unpause, &save, &load, &exit); //show plause menu
 		}
 
 	}

@@ -11,6 +11,7 @@ class Ship
 private:
 	double x;
 	double y;
+	double speedx;
 public:
 	class Projectile
 	{
@@ -25,12 +26,15 @@ public:
 		void setx(double);
 		void move(double, double = 0);
 	};
+	Ship(double, double, double);
 	double getx();
 	double gety();
 	void setx(double);
 	void sety(double);
 	void move(double, double);
 	void setPos(double, double);
+	void setSpeedx(double);
+	double getSpeedx();
 	Projectile* shoot(int);
 };
 class Player
@@ -41,6 +45,7 @@ private:
 	int hp;
 	int points;
 public:
+	Player(double, double, double, int = 3, int = 0, int = 3);
 	void setHp(int);
 	int getHp();
 	void setPlayerProjectile(int);
@@ -58,7 +63,7 @@ class Enemy
 	double slope;
 	int type;
 public:
-	Enemy(double, double, int, double = 180, double = 0.0);
+	Enemy(double, double, int, double, double = 180, double = 0.0);
 	void setRotation(double);
 	double getRotation();
 	void setType(int);
@@ -71,19 +76,19 @@ class Enemy1
 	:public Enemy
 {
 public:
-	Enemy1(double, double, double = 90, double = 0.0);
+	Enemy1(double, double, double, double = 180, double = 0.0);
 };
 class Enemy2
 	:public Enemy
 {
 public:
-	Enemy2(double, double, double = 0, double = 0.0);
+	Enemy2(double, double, double, double = 180, double = 0.0);
 };
 class Enemy3
 	:public Enemy
 {
 public:
-	Enemy3(double, double, double = 180, double = 0.0);
+	Enemy3(double, double, double, double = 180, double = 0.0);
 };
 
 

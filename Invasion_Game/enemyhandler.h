@@ -22,7 +22,7 @@ public:
 	int eOffsetX[ENEMY];
 	int edx[ENEMY];
 	EnemyHandler();
-	void destroyProj(Ship::Projectile **proj);
+	void destroyProj(Ship::Projectile **);
 	void destroyAllProjs();
 	void enemyGen();
 	void enemyCharge(Player *);

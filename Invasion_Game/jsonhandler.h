@@ -14,6 +14,7 @@ public:
 	std::string enemyRotation = "enemyRotation ";
 	std::string enemySlope = "enemySlope ";
 	std::string enemyType = "enemyType ";
+	std::string enemySpeedx = "enemySpeedx ";
 	std::string projx = "projx ";
 	std::string projy = "projy ";
 	std::string diagleftprojx = "diagleftprojx ";

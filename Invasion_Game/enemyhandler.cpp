@@ -33,7 +33,7 @@ void EnemyHandler::enemyGen()
 	int count = 0;
 	int randx;
 	int randy;
-	const int enemyRadius = 24;
+	const int enemyRadius = 32;
 	enemyGenTime = enemyGenClock.getElapsedTime();
 	if (enemyGenTime.asSeconds() > 1)
 	{
@@ -65,7 +65,7 @@ void EnemyHandler::enemyGen()
 				{
 					if (enemy[i] == NULL)
 					{
-						enemy[i] = new Enemy1(randx, randy);
+						enemy[i] = new Enemy1(randx, randy, 1);
 						break;
 					}
 				}
@@ -77,7 +77,7 @@ void EnemyHandler::enemyGen()
 				{
 					if (enemy[i] == NULL)
 					{
-						enemy[i] = new Enemy2(randx, randy);
+						enemy[i] = new Enemy2(randx, randy, 1);
 						break;
 					}
 				}
@@ -89,7 +89,7 @@ void EnemyHandler::enemyGen()
 				{
 					if (enemy[i] == NULL)
 					{
-						enemy[i] = new Enemy3(randx, randy);
+						enemy[i] = new Enemy3(randx, randy, 1);
 						break;
 					}
 				}
